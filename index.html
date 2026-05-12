@@ -1246,36 +1246,59 @@ function handleSignOut() {
 }
 
 function promptSignIn() {
-  if (!window.google?.accounts?.id) {
+  if (!window.google?.accounts?.oauth2) {
     toast("Google library still loading — try again in a sec", "warn");
     return;
   }
-  google.accounts.id.prompt();
+  // Use OAuth2 popup with select_account to bypass Workspace conflicts.
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: OAUTH_CLIENT_ID,
+    scope: "openid email profile https://www.googleapis.com/auth/spreadsheets",
+    prompt: "select_account",
+    callback: async (resp) => {
+      if (resp.error) {
+        toast("Sign-in error: " + (resp.error_description || resp.error), "error");
+        return;
+      }
+      sheetsAccessToken = resp.access_token;
+      try {
+        const ui = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: { Authorization: `Bearer ${resp.access_token}` }
+        });
+        if (!ui.ok) throw new Error(`userinfo ${ui.status}`);
+        const info = await ui.json();
+        currentUser = {
+          email: info.email,
+          name: info.name,
+          picture: info.picture,
+        };
+        localStorage.setItem("petes_user", JSON.stringify(currentUser));
+        localStorage.setItem("petes_token", sheetsAccessToken);
+        setAdmin(isAdmin());
+        renderAuthUI();
+        const admin = isAdmin();
+        toast(`Signed in as ${currentUser.email}${admin ? " — admin access" : " — view only"}`, admin ? "success" : "warn");
+      } catch(e) {
+        toast("Couldn't fetch profile: " + e.message, "error");
+      }
+    },
+  });
+  client.requestAccessToken();
 }
 
 function initGoogleAuth() {
   if (!SSO_ENABLED) return;
-  if (!window.google?.accounts?.id) {
-    // GSI not loaded yet — retry
+  if (!window.google?.accounts?.oauth2) {
     setTimeout(initGoogleAuth, 250);
     return;
   }
-  google.accounts.id.initialize({
-    client_id: OAUTH_CLIENT_ID,
-    callback: handleSignIn,
-    auto_select: true,
-  });
-  // OAuth2 token client for Sheets API writes
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: OAUTH_CLIENT_ID,
-    scope: "https://www.googleapis.com/auth/spreadsheets",
-    callback: (resp) => { sheetsAccessToken = resp.access_token; },
-  });
-  // Restore stored user, prompt sign-in only on explicit click
+  // Restore session if present
   const stored = localStorage.getItem("petes_user");
+  const storedToken = localStorage.getItem("petes_token");
   if (stored) {
     try { currentUser = JSON.parse(stored); } catch(e) {}
   }
+  if (storedToken) sheetsAccessToken = storedToken;
   setAdmin(isAdmin());
   renderAuthUI();
 }
@@ -1283,13 +1306,17 @@ function initGoogleAuth() {
 async function ensureSheetsAccess() {
   if (sheetsAccessToken) return sheetsAccessToken;
   return new Promise((resolve, reject) => {
-    if (!tokenClient) return reject(new Error("Google token client not initialized"));
-    tokenClient.callback = (resp) => {
-      if (resp.error) return reject(new Error(resp.error));
-      sheetsAccessToken = resp.access_token;
-      resolve(resp.access_token);
-    };
-    tokenClient.requestAccessToken({ prompt: "" });
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: OAUTH_CLIENT_ID,
+      scope: "https://www.googleapis.com/auth/spreadsheets",
+      callback: (resp) => {
+        if (resp.error) return reject(new Error(resp.error));
+        sheetsAccessToken = resp.access_token;
+        localStorage.setItem("petes_token", sheetsAccessToken);
+        resolve(resp.access_token);
+      },
+    });
+    client.requestAccessToken({ prompt: "" });
   });
 }
 

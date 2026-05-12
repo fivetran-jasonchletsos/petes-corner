@@ -597,6 +597,67 @@
     color: var(--gold);
   }
 
+  /* Insights grid (natural-language cards) */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .insight {
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .insight .ico {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 6px;
+    background: var(--accent-soft); color: var(--accent);
+    font-size: 14px; margin-bottom: 8px;
+  }
+  .insight .h {
+    font-weight: 600; font-size: 14px; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .insight .b {
+    color: var(--text-dim); font-size: 13px; line-height: 1.5;
+  }
+  .insight .b strong { color: var(--text); }
+  .insight.gold { border-left-color: var(--gold); }
+  .insight.gold .ico { background: var(--gold-soft); color: var(--gold); }
+  .insight.info { border-left-color: var(--info); }
+  .insight.info .ico { background: var(--info-soft); color: var(--info); }
+  .insight.ok { border-left-color: var(--ok); }
+  .insight.ok .ico { background: var(--ok-soft); color: var(--ok); }
+
+  /* Brief output (AI streamed) */
+  .brief-output {
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 20px 24px;
+    line-height: 1.65;
+    font-size: 14.5px;
+    min-height: 60px;
+  }
+  .brief-output h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; font-weight: 700;
+    margin: 18px 0 8px; color: var(--text);
+    border: 0; padding: 0;
+  }
+  .brief-output h3:first-child { margin-top: 0; }
+  .brief-output h4 {
+    font-size: 12px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: .08em;
+    margin: 16px 0 6px;
+  }
+  .brief-output p { margin: 8px 0; color: var(--text-dim); }
+  .brief-output ul { padding-left: 20px; margin: 6px 0; }
+  .brief-output li { margin: 4px 0; color: var(--text-dim); line-height: 1.55; }
+  .brief-output strong { color: var(--text); font-weight: 600; }
+
   /* ============================================================
      SETTINGS MODAL
      ============================================================ */
@@ -771,6 +832,24 @@
       <h2>Analytics</h2>
       <span class="meta">Aggregate views across the collection</span>
     </div>
+    <!-- Smart insights -->
+    <div class="a-panel" style="margin-bottom: 20px;">
+      <h3>Collection Insights</h3>
+      <div id="insights-grid" class="insights-grid"></div>
+    </div>
+
+    <!-- AI Brief -->
+    <div class="a-panel" style="margin-bottom: 20px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom: 14px;">
+        <h3 style="margin:0;">AI Collection Brief</h3>
+        <button class="btn primary" id="generate-brief" style="flex: 0 0 auto; max-width: 200px;">Generate Brief</button>
+      </div>
+      <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 14px;">A senior comic appraiser's take on this collection — strengths, gaps, and what to do next. Streams from Claude.</p>
+      <div id="brief-output" class="brief-output">
+        <p style="color: var(--text-faint); font-style: italic;">Click "Generate Brief" to analyze the full collection.</p>
+      </div>
+    </div>
+
     <div class="analytics-grid">
       <div class="a-panel" style="grid-column: 1 / -1;">
         <h3>Value by Series</h3>
@@ -1012,7 +1091,159 @@ function applyFilters() {
 // ============================================================
 // ANALYTICS
 // ============================================================
+function computeInsights() {
+  const total = COMICS.reduce((s,c) => s + c.value, 0);
+  const keys = COMICS.filter(c => c.key).length;
+  const cgc = COMICS.filter(c => c.cgc).length;
+  const yearsArr = COMICS.map(c => new Date(c.date).getFullYear());
+  const oldest = Math.min(...yearsArr);
+  const newest = Math.max(...yearsArr);
+  const span = newest - oldest;
+
+  // Era buckets
+  const eras = {
+    "Silver Age (1956-1970)": COMICS.filter(c => { const y = new Date(c.date).getFullYear(); return y >= 1956 && y <= 1970; }),
+    "Bronze Age (1970-1985)": COMICS.filter(c => { const y = new Date(c.date).getFullYear(); return y > 1970 && y <= 1985; }),
+    "Copper Age (1985-1991)": COMICS.filter(c => { const y = new Date(c.date).getFullYear(); return y > 1985 && y <= 1991; }),
+    "Modern Age (1992+)":     COMICS.filter(c => new Date(c.date).getFullYear() > 1991),
+  };
+  const dominantEra = Object.entries(eras).sort((a,b) => b[1].length - a[1].length)[0];
+
+  // Publisher
+  const pubGroups = {};
+  COMICS.forEach(c => { pubGroups[c.publisher] = (pubGroups[c.publisher] || 0) + c.value; });
+  const topPub = Object.entries(pubGroups).sort((a,b) => b[1] - a[1])[0];
+  const topPubPct = Math.round(topPub[1] / total * 100);
+
+  // Most valuable
+  const mvp = [...COMICS].sort((a,b) => b.value - a.value)[0];
+  // Oldest book
+  const oldestBook = [...COMICS].sort((a,b) => new Date(a.date) - new Date(b.date))[0];
+  // Condition mix
+  const condCounts = COMICS.reduce((m,c) => { m[c.condition] = (m[c.condition]||0)+1; return m; }, {});
+  const dominantCond = Object.entries(condCounts).sort((a,b) => b[1] - a[1])[0];
+  const condName = { NM: "Near Mint", VF: "Very Fine", VG: "Very Good" }[dominantCond[0]] || dominantCond[0];
+
+  // Series concentration
+  const seriesCounts = COMICS.reduce((m,c) => { m[c.series] = (m[c.series]||0)+1; return m; }, {});
+  const dupSeries = Object.entries(seriesCounts).filter(([,n]) => n > 1).sort((a,b) => b[1] - a[1]);
+
+  // Average + median
+  const sortedVals = [...COMICS].map(c => c.value).sort((a,b) => a - b);
+  const median = sortedVals[Math.floor(sortedVals.length/2)];
+  const avg = Math.round(total / COMICS.length);
+
+  return [
+    { icon: "💰", cls: "gold", h: "Collection Net Worth",
+      b: `Total valuation is <strong>$${total.toLocaleString()}</strong> across ${COMICS.length} issues — averaging <strong>$${avg}</strong> per book with a median of <strong>$${median}</strong>.` },
+    { icon: "👑", cls: "", h: "Crown Jewel",
+      b: `<strong>${mvp.title} #${mvp.issue}</strong> leads the collection at <strong>$${mvp.value}</strong> — ${Math.round(mvp.value/total*100)}% of total value.` },
+    { icon: "🗝️", cls: "gold", h: "Key Issue Density",
+      b: `<strong>${keys} of ${COMICS.length}</strong> (${Math.round(keys/COMICS.length*100)}%) are flagged as key issues — exceptional for a focused collection. The market rewards this kind of curation.` },
+    { icon: "🏛️", cls: "info", h: "Era Concentration",
+      b: `Strongest holdings are in the <strong>${dominantEra[0]}</strong> era (<strong>${dominantEra[1].length} books</strong>). Collection spans <strong>${span} years</strong>, from ${oldest} to ${newest}.` },
+    { icon: "📚", cls: "info", h: "Publisher Mix",
+      b: `<strong>${topPub[0]}</strong> dominates at <strong>${topPubPct}%</strong> of value ($${topPub[1]}). ${Object.keys(pubGroups).length}-publisher diversification — ${Object.keys(pubGroups).length >= 4 ? "well-balanced" : "concentrated"}.` },
+    { icon: "✨", cls: "ok", h: "Grading Profile",
+      b: `Dominant condition is <strong>${condName}</strong> (${dominantCond[1]}/${COMICS.length} books). ${cgc > 0 ? `<strong>${cgc} CGC slab${cgc>1?'s':''}</strong> add provenance and resale leverage.` : "No CGC-graded books yet — slabbing the top keys could unlock 20-40% premium."}` },
+    { icon: "📜", cls: "", h: "Oldest Book in Long-Box",
+      b: `<strong>${oldestBook.title} #${oldestBook.issue}</strong> from ${new Date(oldestBook.date).getFullYear()} — <strong>${new Date().getFullYear() - new Date(oldestBook.date).getFullYear()} years old</strong>.` },
+    ...(dupSeries.length ? [{
+      icon: "🔁", cls: "info", h: "Series Depth",
+      b: `Multiple copies in: ${dupSeries.map(([s,n]) => `<strong>${s}</strong> (${n})`).join(", ")}. Duplicates of keys can hedge or be flipped to fund upgrades.`
+    }] : []),
+  ];
+}
+
+function renderInsights() {
+  const items = computeInsights();
+  document.getElementById("insights-grid").innerHTML = items.map(i => `
+    <div class="insight ${i.cls}">
+      <div class="ico">${i.icon}</div>
+      <div class="h">${i.h}</div>
+      <div class="b">${i.b}</div>
+    </div>`).join("");
+}
+
+async function generateBrief() {
+  const btn = document.getElementById("generate-brief");
+  const out = document.getElementById("brief-output");
+  btn.disabled = true;
+  btn.textContent = "Generating…";
+  out.innerHTML = `<p style="color:var(--text-faint)"><span class="spinner"></span>Claude is reviewing the collection…</p>`;
+
+  const summary = COMICS.map(c =>
+    `- ${c.title} #${c.issue} (${c.edition}, ${c.publisher}, ${new Date(c.date).getFullYear()}) — ${c.condition}${c.cgc ? ' CGC '+c.cgc : ''} — $${c.value}${c.key ? ' [KEY]' : ''}`
+  ).join("\n");
+  const total = COMICS.reduce((s,c) => s+c.value, 0);
+
+  const prompt = `You are a senior comic appraiser and collection strategist with 25 years in the market — calm, candid, no hype.
+
+Below is a real collection. Write a Collection Brief in markdown using these EXACT sections (use ## for section headers, no preamble):
+
+## Executive Summary
+2-3 sentences. The collection's character in plain English: era, taste, focus, total value.
+
+## Strengths
+3-4 bullets. Specific, name issues. What makes this collection notable.
+
+## Gaps & Weaknesses
+2-3 bullets. Honest. Missing cornerstones, condition issues, era gaps, etc.
+
+## Top 3 Plays Right Now
+3 bullets. Concrete actions ranked by ROI:
+- "Slab X" / "Sell X to fund Y" / "Add Z while still affordable" — each with a brief why.
+
+## Market Outlook (12-month)
+One paragraph. What macro forces matter for THIS collection's holdings (e.g., Carnage movie chatter, Sandman Netflix renewals, X-23 in MCU, Spawn animated film, etc.).
+
+Total value: $${total} across ${COMICS.length} issues.
+
+Collection:
+${summary}
+
+Be specific. Reference issue numbers and dollar figures. Avoid generic advice.`;
+
+  try {
+    await callClaude(prompt, (text) => {
+      out.innerHTML = fmtBrief(text);
+    });
+  } catch (e) {
+    out.innerHTML = `<p style="color:var(--accent)"><strong>Error:</strong> ${e.message}</p>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Regenerate";
+  }
+}
+
+function fmtBrief(s) {
+  let h = s
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  const lines = h.split("\n");
+  let out = "", inUl = false;
+  for (const ln of lines) {
+    const t = ln.trim();
+    if (/^##\s+/.test(t)) {
+      if (inUl) { out += "</ul>"; inUl = false; }
+      out += "<h3>" + t.replace(/^##\s+/, "") + "</h3>";
+    } else if (/^###\s+/.test(t)) {
+      if (inUl) { out += "</ul>"; inUl = false; }
+      out += "<h4>" + t.replace(/^###\s+/, "") + "</h4>";
+    } else if (/^[-•]\s+/.test(t)) {
+      if (!inUl) { out += "<ul>"; inUl = true; }
+      out += "<li>" + t.replace(/^[-•]\s+/, "") + "</li>";
+    } else {
+      if (inUl) { out += "</ul>"; inUl = false; }
+      if (t) out += "<p>" + t + "</p>";
+    }
+  }
+  if (inUl) out += "</ul>";
+  return out;
+}
+
 function renderAnalytics() {
+  renderInsights();
   const seriesGroups = {};
   COMICS.forEach(c => { seriesGroups[c.series] = (seriesGroups[c.series] || 0) + c.value; });
   const max = Math.max(...Object.values(seriesGroups));
@@ -1242,6 +1473,7 @@ modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList
 ["search","filter-pub","filter-cond","filter-key","filter-cgc"].forEach(id => {
   document.getElementById(id).addEventListener("input", applyFilters);
 });
+document.getElementById("generate-brief").addEventListener("click", generateBrief);
 
 renderStats();
 renderPublisherBar();

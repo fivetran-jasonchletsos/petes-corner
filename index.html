@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-size="s">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -8,841 +8,252 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  /* ============================================================
-     THEME TOKENS
-     ============================================================ */
   :root, [data-theme="dark"] {
-    --bg: #0d0e11;
-    --bg-elev: #15171c;
-    --surface: #1a1d24;
-    --surface-2: #22262f;
-    --surface-3: #2c313c;
-    --border: #2a2e38;
-    --border-soft: #1f232b;
-    --text: #ececf0;
-    --text-dim: #9aa0ac;
-    --text-faint: #6b6f7a;
-    --accent: #ef4444;
-    --accent-deep: #b91c1c;
-    --accent-soft: rgba(239, 68, 68, 0.12);
-    --gold: #f5a524;
-    --gold-soft: rgba(245, 165, 36, 0.14);
-    --ok: #22c55e;
-    --ok-soft: rgba(34, 197, 94, 0.14);
-    --info: #60a5fa;
-    --info-soft: rgba(96, 165, 250, 0.14);
-    --warn: #eab308;
-    --warn-soft: rgba(234, 179, 8, 0.14);
+    --bg: #0d0e11; --bg-elev: #15171c; --surface: #1a1d24; --surface-2: #22262f; --surface-3: #2c313c;
+    --border: #2a2e38; --border-soft: #1f232b;
+    --text: #ececf0; --text-dim: #9aa0ac; --text-faint: #6b6f7a;
+    --accent: #ef4444; --accent-deep: #b91c1c; --accent-soft: rgba(239,68,68,.12);
+    --gold: #f5a524; --gold-soft: rgba(245,165,36,.14);
+    --ok: #22c55e; --ok-soft: rgba(34,197,94,.14);
+    --info: #60a5fa; --info-soft: rgba(96,165,250,.14);
+    --warn: #eab308; --warn-soft: rgba(234,179,8,.14);
     --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
     --shadow-md: 0 4px 12px rgba(0,0,0,.35);
     --shadow-lg: 0 12px 32px rgba(0,0,0,.45);
   }
   [data-theme="light"] {
-    --bg: #fafafa;
-    --bg-elev: #ffffff;
-    --surface: #ffffff;
-    --surface-2: #f5f5f7;
-    --surface-3: #e9eaee;
-    --border: #e4e4e8;
-    --border-soft: #efeff2;
-    --text: #18181b;
-    --text-dim: #52525b;
-    --text-faint: #8a8a93;
-    --accent: #dc2626;
-    --accent-deep: #991b1b;
-    --accent-soft: rgba(220, 38, 38, 0.08);
-    --gold: #d97706;
-    --gold-soft: rgba(217, 119, 6, 0.10);
-    --ok: #16a34a;
-    --ok-soft: rgba(22, 163, 74, 0.10);
-    --info: #2563eb;
-    --info-soft: rgba(37, 99, 235, 0.10);
-    --warn: #ca8a04;
-    --warn-soft: rgba(202, 138, 4, 0.10);
+    --bg: #fafafa; --bg-elev: #fff; --surface: #fff; --surface-2: #f5f5f7; --surface-3: #e9eaee;
+    --border: #e4e4e8; --border-soft: #efeff2;
+    --text: #18181b; --text-dim: #52525b; --text-faint: #8a8a93;
+    --accent: #dc2626; --accent-deep: #991b1b; --accent-soft: rgba(220,38,38,.08);
+    --gold: #d97706; --gold-soft: rgba(217,119,6,.1);
+    --ok: #16a34a; --ok-soft: rgba(22,163,74,.1);
+    --info: #2563eb; --info-soft: rgba(37,99,235,.1);
+    --warn: #ca8a04; --warn-soft: rgba(202,138,4,.1);
     --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
     --shadow-md: 0 4px 12px rgba(0,0,0,.06);
     --shadow-lg: 0 12px 32px rgba(0,0,0,.08);
   }
 
-  /* ============================================================
-     RESET & BASE
-     ============================================================ */
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 15px;
-    line-height: 1.55;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-  body { transition: background .25s ease, color .25s ease; }
-  .display { font-family: 'Playfair Display', Georgia, serif; }
-  .mono { font-family: 'JetBrains Mono', monospace; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-size:15px;line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+  button{font-family:inherit;cursor:pointer}
+  input,select{font-family:inherit}
+  a{color:inherit;text-decoration:none}
 
-  button { font-family: inherit; cursor: pointer; }
-  input, select { font-family: inherit; }
-  a { color: inherit; text-decoration: none; }
+  header{position:sticky;top:0;z-index:30;background:var(--bg-elev);border-bottom:1px solid var(--border);backdrop-filter:saturate(140%) blur(8px)}
+  .header-inner{max-width:1500px;margin:0 auto;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .brand{display:flex;align-items:baseline;gap:14px}
+  .brand h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.6rem,2.6vw,2.1rem);line-height:1;letter-spacing:-.02em}
+  .brand h1 .accent{color:var(--accent)}
+  .brand .tagline{font-size:13px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+  .brand .tagline .dot{color:var(--text-faint);margin:0 6px}
+  .header-actions{display:flex;gap:8px;align-items:center}
+  .nav-tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:8px}
+  .nav-tab{background:transparent;border:0;color:var(--text-dim);padding:8px 16px;font-size:14px;font-weight:500;border-radius:6px;transition:all .15s}
+  .nav-tab:hover{color:var(--text)}
+  .nav-tab.active{background:var(--bg-elev);color:var(--text);box-shadow:var(--shadow-sm)}
+  .icon-btn{background:var(--surface-2);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;transition:all .15s}
+  .icon-btn:hover{background:var(--surface-3);border-color:var(--text-faint)}
+  .icon-btn svg{width:18px;height:18px}
 
-  /* ============================================================
-     HEADER
-     ============================================================ */
-  header {
-    position: sticky; top: 0; z-index: 30;
-    background: var(--bg-elev);
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: saturate(140%) blur(8px);
-  }
-  .header-inner {
-    max-width: 1400px; margin: 0 auto;
-    padding: 18px 32px;
-    display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
-  }
-  .brand {
-    display: flex; align-items: baseline; gap: 14px;
-  }
-  .brand h1 {
-    font-family: 'Playfair Display', serif;
-    font-weight: 900;
-    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
-    line-height: 1;
-    letter-spacing: -.02em;
-  }
-  .brand h1 .accent { color: var(--accent); }
-  .brand .tagline {
-    font-size: 13px; color: var(--text-dim);
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .brand .tagline .dot { color: var(--text-faint); margin: 0 6px; }
+  main{max-width:1500px;margin:0 auto;padding:32px 32px 80px}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .section-head h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;letter-spacing:-.01em}
+  .section-head .meta{color:var(--text-dim);font-size:13px}
 
-  .header-actions {
-    display: flex; gap: 8px; align-items: center;
-  }
-  .nav-tabs {
-    display: flex; gap: 4px; background: var(--surface-2);
-    padding: 4px; border-radius: 8px;
-  }
-  .nav-tab {
-    background: transparent; border: 0; color: var(--text-dim);
-    padding: 8px 16px; font-size: 14px; font-weight: 500;
-    border-radius: 6px; transition: all .15s;
-  }
-  .nav-tab:hover { color: var(--text); }
-  .nav-tab.active {
-    background: var(--bg-elev); color: var(--text);
-    box-shadow: var(--shadow-sm);
-  }
-  .icon-btn {
-    background: var(--surface-2); border: 1px solid var(--border);
-    color: var(--text); width: 38px; height: 38px;
-    border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
-    transition: all .15s;
-  }
-  .icon-btn:hover { background: var(--surface-3); border-color: var(--text-faint); }
-  .icon-btn svg { width: 18px; height: 18px; }
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:28px}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;transition:border-color .15s;position:relative;overflow:hidden}
+  .stat:hover{border-color:var(--text-faint)}
+  .stat .label{color:var(--text-dim);font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+  .stat .value{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;margin-top:6px;line-height:1.1;letter-spacing:-.01em}
+  .stat .value.money{color:var(--gold)}
+  .stat .sub{margin-top:8px;font-size:12px;color:var(--text-faint);font-family:'JetBrains Mono',monospace}
+  .stat.wide{grid-column:span 2}
+  .pub-bar{height:10px;border-radius:999px;overflow:hidden;display:flex;margin-top:14px;background:var(--surface-3)}
+  .pub-seg{height:100%;transition:filter .15s}
+  .pub-seg:hover{filter:brightness(1.2)}
+  .pub-legend{display:flex;flex-wrap:wrap;gap:12px 16px;margin-top:12px;font-size:12px;color:var(--text-dim)}
+  .pub-legend span{display:inline-flex;align-items:center;gap:6px}
+  .pub-dot{width:8px;height:8px;border-radius:2px}
+  .pub-legend strong{color:var(--text);margin-left:2px}
 
-  /* ============================================================
-     MAIN
-     ============================================================ */
-  main {
-    max-width: 1400px; margin: 0 auto;
-    padding: 40px 32px 80px;
-  }
-  .section-head {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
-    margin-bottom: 20px;
-  }
-  .section-head h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem; font-weight: 700; letter-spacing: -.01em;
-  }
-  .section-head .meta { color: var(--text-dim); font-size: 13px; }
+  /* Admin */
+  .admin-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:var(--accent);color:#fff;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .admin-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff;animation:pulse 1.8s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.4}}
+  .admin-actions{display:none;gap:8px;margin-bottom:16px;padding:12px 16px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;align-items:center;flex-wrap:wrap}
+  [data-admin="1"] .admin-actions{display:flex}
+  .admin-actions .label{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+  .admin-actions .spacer{flex:1}
 
-  /* ============================================================
-     STAT CARDS
-     ============================================================ */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 14px;
-    margin-bottom: 36px;
-  }
-  .stat {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 22px;
-    transition: border-color .15s, transform .15s;
-    position: relative; overflow: hidden;
-  }
-  .stat:hover { border-color: var(--text-faint); }
-  .stat .label {
-    color: var(--text-dim); font-size: 12px; font-weight: 500;
-    letter-spacing: .04em; text-transform: uppercase;
-  }
-  .stat .value {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem; font-weight: 700; margin-top: 6px; line-height: 1.1;
-    letter-spacing: -.01em;
-  }
-  .stat .value.money { color: var(--gold); }
-  .stat .sub {
-    margin-top: 8px; font-size: 12px; color: var(--text-faint);
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .stat.wide { grid-column: span 2; }
+  .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+  .input,.select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:14px;outline:none;transition:border-color .15s,box-shadow .15s}
+  .input:focus,.select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .input{flex:1;min-width:220px}
+  .size-control{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:3px;margin-left:auto}
+  .size-btn{background:transparent;border:0;color:var(--text-dim);padding:6px 14px;font-size:12px;font-weight:600;border-radius:6px;min-width:36px;letter-spacing:.05em;transition:all .15s}
+  .size-btn:hover{color:var(--text)}
+  .size-btn.active{background:var(--bg-elev);color:var(--text);box-shadow:var(--shadow-sm)}
 
-  .pub-bar {
-    height: 10px; border-radius: 999px; overflow: hidden;
-    display: flex; margin-top: 14px; background: var(--surface-3);
-  }
-  .pub-seg { height: 100%; transition: filter .15s; }
-  .pub-seg:hover { filter: brightness(1.2); }
-  .pub-legend {
-    display: flex; flex-wrap: wrap; gap: 12px 16px; margin-top: 12px;
-    font-size: 12px; color: var(--text-dim);
-  }
-  .pub-legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .pub-dot { width: 8px; height: 8px; border-radius: 2px; }
-  .pub-legend strong { color: var(--text); margin-left: 2px; }
+  .result-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);margin-bottom:14px}
+  .grid{display:grid;gap:14px}
+  [data-size="s"] .grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+  [data-size="m"] .grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  [data-size="l"] .grid{grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:20px}
 
-  /* ============================================================
-     FILTERS
-     ============================================================ */
-  .filters {
-    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
-    margin-bottom: 20px;
-  }
-  .input, .select {
-    background: var(--surface); color: var(--text);
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 10px 14px; font-size: 14px; outline: none;
-    transition: border-color .15s, box-shadow .15s;
-  }
-  .input:focus, .select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-  }
-  .input { flex: 1; min-width: 220px; }
-  .filters .toggle {
-    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
-    padding: 10px 14px; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; font-size: 13px; color: var(--text-dim);
-    transition: all .15s;
-  }
-  .filters .toggle:hover { color: var(--text); border-color: var(--text-faint); }
-  .filters .toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
-  .filters .toggle:has(input:checked) { color: var(--text); border-color: var(--accent); background: var(--accent-soft); }
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;transition:all .2s;position:relative;overflow:hidden;cursor:default}
+  .card:hover{border-color:var(--accent);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+  .card-corner{position:absolute;top:14px;right:14px;background:var(--accent-soft);color:var(--accent);padding:3px 8px;font-size:11px;font-weight:600;border-radius:5px;font-family:'JetBrains Mono',monospace;z-index:2}
+  .card-publisher{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+  .card h3{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;line-height:1.2;margin-top:6px;padding-right:56px;letter-spacing:-.01em}
+  .card-artist{color:var(--text-dim);font-size:12px;margin-top:4px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .card-value{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--gold);margin-top:12px;line-height:1;letter-spacing:-.01em}
+  .card-value small{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-faint);font-weight:400;margin-top:3px;letter-spacing:.1em}
+  .card-meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft);font-size:11px;color:var(--text-faint);font-family:'JetBrains Mono',monospace}
+  .card-meta .markup{color:var(--ok);font-weight:600}
+  .edit-pencil{position:absolute;top:14px;left:14px;background:var(--accent);color:#fff;width:26px;height:26px;border:0;border-radius:5px;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:12px;z-index:3;box-shadow:var(--shadow-sm);opacity:0;transition:opacity .15s,transform .15s}
+  [data-admin="1"] .edit-pencil{display:flex}
+  .card:hover .edit-pencil{opacity:1}
+  .edit-pencil:hover{transform:scale(1.1);background:var(--accent-deep)}
 
-  /* Size segmented control */
-  .size-control {
-    display: inline-flex; background: var(--surface-2);
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 3px; margin-left: auto;
-  }
-  .size-btn {
-    background: transparent; border: 0; color: var(--text-dim);
-    padding: 6px 14px; font-size: 12px; font-weight: 600;
-    border-radius: 6px; min-width: 36px; letter-spacing: .05em;
-    transition: all .15s;
-  }
-  .size-btn:hover { color: var(--text); }
-  .size-btn.active {
-    background: var(--bg-elev); color: var(--text);
-    box-shadow: var(--shadow-sm);
-  }
-  @media (max-width: 720px) {
-    .size-control { margin-left: 0; width: 100%; justify-content: center; }
-    .size-btn { flex: 1; padding: 8px 12px; font-size: 13px; }
-  }
+  [data-size="m"] .card h3{font-size:1.2rem;padding-right:60px}
+  [data-size="m"] .card-value{font-size:1.7rem}
+  [data-size="l"] .card{padding:20px}
+  [data-size="l"] .card h3{font-size:1.4rem;padding-right:70px}
+  [data-size="l"] .card-value{font-size:2rem}
+  [data-size="l"] .card-artist{white-space:normal}
 
-  /* Size variants */
-  [data-size="s"] .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-  [data-size="s"] .card { padding: 12px; }
-  [data-size="s"] .card-cover { margin: -2px 0 10px; border-radius: 6px; }
-  [data-size="s"] .card-corner { top: 12px; right: 12px; font-size: 10px; padding: 2px 6px; }
-  [data-size="s"] .card-publisher { font-size: 9px; }
-  [data-size="s"] .card h3 { font-size: .95rem; padding-right: 50px; margin-top: 4px; }
-  [data-size="s"] .card-edition { font-size: 11px; }
-  [data-size="s"] .card-badges { gap: 4px; margin-top: 10px; }
-  [data-size="s"] .badge { font-size: 9px; padding: 2px 6px; }
-  [data-size="s"] .card-value { font-size: 1.3rem; margin-top: 10px; }
-  [data-size="s"] .card-value small { font-size: 8px; }
-  [data-size="s"] .card-meta { margin-top: 8px; padding-top: 8px; font-size: 10px; }
-  [data-size="s"] .card-actions { margin-top: 10px; gap: 6px; }
-  [data-size="s"] .btn { padding: 7px 8px; font-size: 11px; }
+  .load-more-wrap{display:flex;justify-content:center;margin:32px 0 0}
+  .load-more{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 32px;border-radius:8px;font-size:14px;font-weight:500;transition:all .15s}
+  .load-more:hover{background:var(--surface-2);border-color:var(--accent)}
 
-  [data-size="m"] .grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  /* Drawer */
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:min(540px,100%);background:var(--bg-elev);border-left:1px solid var(--border);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:50;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
+  .drawer.open{transform:translateX(0)}
+  .drawer-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .drawer-head h2{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;line-height:1.2}
+  .drawer-head p{color:var(--text-dim);font-size:12px;font-family:'JetBrains Mono',monospace;margin-top:4px}
+  .drawer-close{background:var(--surface-2);border:1px solid var(--border);color:var(--text);width:32px;height:32px;border-radius:8px;font-size:14px}
+  .drawer-close:hover{background:var(--surface-3)}
+  .drawer-body{flex:1;overflow-y:auto;padding:24px}
 
-  [data-size="l"] .grid { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 22px; }
-  [data-size="l"] .card { padding: 24px; }
-  [data-size="l"] .card h3 { font-size: 1.55rem; }
-  [data-size="l"] .card-value { font-size: 2.2rem; }
-  [data-size="l"] .badge { font-size: 12px; padding: 4px 10px; }
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+  .detail-cell{background:var(--surface-2);border:1px solid var(--border-soft);border-radius:8px;padding:12px 14px}
+  .detail-cell .lbl{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+  .detail-cell .v{font-size:15px;color:var(--text);margin-top:4px;font-weight:500}
+  .detail-cell.wide{grid-column:1/-1}
+  .detail-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
 
-  /* ============================================================
-     CARDS GRID
-     ============================================================ */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-  }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    transition: all .2s;
-    transform: translateY(8px); opacity: 0;
-    position: relative; overflow: hidden;
-  }
-  .card.in { transform: translateY(0); opacity: 1; }
-  .card:hover {
-    border-color: var(--accent);
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-  }
-  .card-corner {
-    position: absolute; top: 16px; right: 16px;
-    background: var(--accent-soft); color: var(--accent);
-    padding: 4px 10px; font-size: 12px; font-weight: 600;
-    border-radius: 6px; font-family: 'JetBrains Mono', monospace;
-    z-index: 2;
-  }
-  .card-cover {
-    width: 100%; aspect-ratio: 2/3;
-    background: var(--surface-2);
-    border-radius: 8px; overflow: hidden;
-    margin: -4px 0 14px;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    border: 1px solid var(--border-soft);
-  }
-  .card-cover img {
-    width: 100%; height: 100%; object-fit: cover;
-    display: block;
-    transition: transform .4s cubic-bezier(.2,.7,.3,1);
-  }
-  .card:hover .card-cover img { transform: scale(1.04); }
-  .card-cover .cover-fallback {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-faint); font-size: 12px; padding: 12px; text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .card-publisher {
-    font-size: 11px; color: var(--text-faint);
-    text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
-  }
-  .card h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem; font-weight: 700; line-height: 1.2;
-    margin-top: 6px; padding-right: 60px;
-    letter-spacing: -.01em;
-  }
-  .card-edition {
-    color: var(--text-dim); font-size: 13px; margin-top: 4px;
-    font-style: italic;
-  }
-  .card-badges {
-    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px;
-  }
-  .badge {
-    font-size: 11px; font-weight: 600; padding: 3px 8px;
-    border-radius: 4px; letter-spacing: .03em;
-  }
-  .badge.nm { background: var(--ok-soft); color: var(--ok); }
-  .badge.vf { background: var(--info-soft); color: var(--info); }
-  .badge.vg { background: var(--warn-soft); color: var(--warn); }
-  .badge.cgc { background: var(--accent-soft); color: var(--accent); }
-  .badge.key { background: var(--gold-soft); color: var(--gold); }
-  .card-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem; font-weight: 700; color: var(--gold);
-    margin-top: 16px; line-height: 1;
-    letter-spacing: -.01em;
-  }
-  .card-value small {
-    display: block; font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; color: var(--text-faint); font-weight: 400;
-    margin-top: 4px; letter-spacing: .1em;
-  }
-  .card-meta {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-top: 12px; padding-top: 12px;
-    border-top: 1px solid var(--border-soft);
-    font-size: 12px; color: var(--text-faint);
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .card-actions { display: flex; gap: 8px; margin-top: 14px; }
-  .btn {
-    flex: 1; background: var(--surface-2); color: var(--text);
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 9px 12px; font-size: 13px; font-weight: 500;
-    transition: all .15s; text-align: center; display: inline-block;
-  }
-  .btn:hover { background: var(--surface-3); border-color: var(--text-faint); }
-  .btn.primary {
-    background: var(--accent); color: white; border-color: var(--accent);
-  }
-  .btn.primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+  .insights-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+  .insights-card h4{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+  .insights-card ul{padding-left:18px}
+  .insights-card li{margin:6px 0;line-height:1.55}
+  .insights-card p{margin:6px 0;line-height:1.55}
+  .insights-card strong{color:var(--text);font-weight:600}
 
-  /* ============================================================
-     DRAWER
-     ============================================================ */
-  .drawer {
-    position: fixed; top: 0; right: 0; height: 100vh;
-    width: min(540px, 100%);
-    background: var(--bg-elev);
-    border-left: 1px solid var(--border);
-    transform: translateX(100%);
-    transition: transform .3s cubic-bezier(.4,.0,.2,1);
-    z-index: 50;
-    display: flex; flex-direction: column;
-    box-shadow: var(--shadow-lg);
-  }
-  .drawer.open { transform: translateX(0); }
-  .drawer-head {
-    padding: 20px 24px; border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
-  }
-  .drawer-head h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem; font-weight: 700; line-height: 1.2;
-  }
-  .drawer-head p {
-    color: var(--text-dim); font-size: 12px;
-    font-family: 'JetBrains Mono', monospace; margin-top: 4px;
-  }
-  .drawer-close {
-    background: var(--surface-2); border: 1px solid var(--border);
-    color: var(--text); width: 32px; height: 32px;
-    border-radius: 8px; font-size: 14px;
-  }
-  .drawer-close:hover { background: var(--surface-3); }
-  .drawer-body {
-    flex: 1; overflow-y: auto; padding: 24px;
-  }
+  .ebay-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+  .ebay-logo{font-family:Arial,sans-serif;font-weight:900;font-size:1.5rem;letter-spacing:-.05em}
+  .ebay-logo span:nth-child(1){color:#e53238}.ebay-logo span:nth-child(2){color:#0064d2}.ebay-logo span:nth-child(3){color:#f5af02}.ebay-logo span:nth-child(4){color:#86b817}
+  .ebay-title{font-weight:600;font-size:1rem;color:var(--info);margin-top:12px;line-height:1.4}
+  .ebay-desc{margin-top:8px;font-size:13px;color:var(--text-dim);white-space:pre-wrap;line-height:1.6}
+  .copy-btn{margin-top:12px;padding:8px 14px;background:var(--info);color:#fff;border:0;border-radius:6px;font-size:13px;font-weight:600}
 
-  .insights-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-  }
-  .insights-card h4 {
-    font-size: 11px; font-weight: 700; color: var(--accent);
-    letter-spacing: .1em; text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .insights-card ul { padding-left: 18px; }
-  .insights-card li { margin: 8px 0; line-height: 1.6; }
-  .insights-card p { margin: 8px 0; line-height: 1.6; }
-  .insights-card strong { color: var(--text); font-weight: 600; }
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
-  .ebay-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-  }
-  .ebay-logo {
-    font-family: Arial, sans-serif; font-weight: 900;
-    font-size: 1.5rem; letter-spacing: -.05em;
-  }
-  .ebay-logo span:nth-child(1){ color:#e53238; }
-  .ebay-logo span:nth-child(2){ color:#0064d2; }
-  .ebay-logo span:nth-child(3){ color:#f5af02; }
-  .ebay-logo span:nth-child(4){ color:#86b817; }
-  .ebay-title {
-    font-weight: 600; font-size: 1rem; color: var(--info);
-    margin-top: 14px; line-height: 1.4;
-  }
-  .ebay-desc {
-    margin-top: 10px; font-size: 14px; color: var(--text-dim);
-    white-space: pre-wrap; line-height: 1.6;
-  }
-  .copy-btn {
-    margin-top: 14px; padding: 8px 14px;
-    background: var(--info); color: white; border: 0;
-    border-radius: 6px; font-size: 13px; font-weight: 600;
-  }
+  .analytics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:20px}
+  .a-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
+  .a-panel h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:18px;letter-spacing:-.01em}
+  .bar-row{display:grid;grid-template-columns:200px 1fr 80px;align-items:center;gap:14px;margin:10px 0;font-size:13px}
+  .bar-row .name{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar-row .val{color:var(--gold);text-align:right;font-weight:600;font-family:'JetBrains Mono',monospace}
+  .bar-track{height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+  .bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:4px;transition:width 1s cubic-bezier(.2,.7,.3,1)}
 
-  .spinner {
-    display: inline-block; width: 16px; height: 16px;
-    border: 2px solid var(--border); border-top-color: var(--accent);
-    border-radius: 50%; animation: spin .7s linear infinite;
-    vertical-align: -3px; margin-right: 8px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .donut-wrap{display:flex;align-items:center;gap:28px;justify-content:center;flex-wrap:wrap}
+  .donut{width:180px;height:180px;transform:rotate(-90deg)}
+  .donut-legend{font-size:14px}
+  .era-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;margin:6px 0;font-size:13px}
+  .era-row .sq{width:12px;height:12px;border-radius:3px}
+  .era-row .label{color:var(--text)}
+  .era-row .label small{color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:11px;margin-left:4px}
+  .era-row .val{color:var(--gold);font-weight:600;font-family:'JetBrains Mono',monospace;font-size:12px}
 
-  /* ============================================================
-     ANALYTICS
-     ============================================================ */
-  .analytics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-    gap: 20px;
-  }
-  .a-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-  }
-  .a-panel h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem; font-weight: 700;
-    margin-bottom: 18px; letter-spacing: -.01em;
-  }
-  .bar-row {
-    display: grid; grid-template-columns: 200px 1fr 80px;
-    align-items: center; gap: 14px; margin: 10px 0;
-    font-size: 13px;
-  }
-  .bar-row .name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .bar-row .val {
-    color: var(--gold); text-align: right; font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .bar-track {
-    height: 8px; background: var(--surface-2);
-    border-radius: 4px; overflow: hidden;
-  }
-  .bar-fill {
-    height: 100%; width: 0;
-    background: linear-gradient(90deg, var(--accent), var(--gold));
-    border-radius: 4px;
-    transition: width 1s cubic-bezier(.2,.7,.3,1);
-  }
+  .podium{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:end;min-height:240px}
+  .podium-step{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+  .podium-step:nth-child(1){background:var(--gold-soft);border-color:var(--gold)}
+  .podium-step:nth-child(2){background:var(--info-soft);border-color:var(--info)}
+  .podium-step:nth-child(3){background:var(--accent-soft);border-color:var(--accent)}
+  .podium-rank{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1;color:var(--text)}
+  .podium-title{font-size:11px;font-weight:600;margin-top:6px;color:var(--text);line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+  .podium-val{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-top:6px;color:var(--gold)}
 
-  .donut-wrap {
-    display: flex; align-items: center; gap: 28px;
-    justify-content: center; flex-wrap: wrap;
-  }
-  .donut { width: 180px; height: 180px; transform: rotate(-90deg); }
-  .donut-legend { font-size: 14px; }
-  .donut-legend > div {
-    display: flex; align-items: center; gap: 10px; margin: 10px 0;
-  }
-  .donut-legend .sq {
-    width: 12px; height: 12px; border-radius: 3px;
-  }
-  .donut-pct {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem; font-weight: 700; color: var(--gold);
-    margin-top: 12px;
-  }
-  .era-row {
-    display: grid; grid-template-columns: auto 1fr auto;
-    align-items: center; gap: 10px; margin: 6px 0;
-    font-size: 13px;
-  }
-  .era-row .sq {
-    width: 12px; height: 12px; border-radius: 3px;
-  }
-  .era-row .label { color: var(--text); }
-  .era-row .label small { color: var(--text-faint); font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-left: 4px; }
-  .era-row .val { color: var(--gold); font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .insights-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+  .insight{background:var(--surface-2);border:1px solid var(--border-soft);border-left:3px solid var(--accent);border-radius:8px;padding:14px 16px}
+  .insight .ico{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-size:14px;margin-bottom:8px}
+  .insight .h{font-weight:600;font-size:14px;color:var(--text);margin-bottom:4px}
+  .insight .b{color:var(--text-dim);font-size:13px;line-height:1.5}
+  .insight .b strong{color:var(--text)}
+  .insight.gold{border-left-color:var(--gold)}.insight.gold .ico{background:var(--gold-soft);color:var(--gold)}
+  .insight.info{border-left-color:var(--info)}.insight.info .ico{background:var(--info-soft);color:var(--info)}
+  .insight.ok{border-left-color:var(--ok)}.insight.ok .ico{background:var(--ok-soft);color:var(--ok)}
 
-  .timeline {
-    position: relative; overflow-x: auto;
-    padding: 24px 16px 60px;
-  }
-  .timeline-track {
-    position: relative; height: 2px; background: var(--border);
-    min-width: 800px;
-  }
-  .timeline-dot {
-    position: absolute; top: -7px; width: 16px; height: 16px;
-    background: var(--accent); border: 3px solid var(--bg-elev);
-    border-radius: 50%; transform: translateX(-50%); cursor: pointer;
-    transition: transform .15s;
-  }
-  .timeline-dot.key { background: var(--gold); }
-  .timeline-dot:hover { transform: translateX(-50%) scale(1.5); z-index: 5; }
-  .timeline-label {
-    position: absolute; top: 20px; transform: translateX(-50%);
-    font-size: 11px; color: var(--text-dim);
-    white-space: nowrap; max-width: 100px; text-align: center;
-    line-height: 1.3;
-  }
-  .timeline-label .year {
-    display: block; color: var(--text); font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .brief-output{background:var(--surface-2);border:1px solid var(--border-soft);border-radius:8px;padding:20px 24px;line-height:1.65;font-size:14.5px;min-height:60px}
+  .brief-output h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:18px 0 8px;color:var(--text);border:0;padding:0}
+  .brief-output h3:first-child{margin-top:0}
+  .brief-output h4{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin:16px 0 6px}
+  .brief-output p{margin:8px 0;color:var(--text-dim)}
+  .brief-output ul{padding-left:20px;margin:6px 0}
+  .brief-output li{margin:4px 0;color:var(--text-dim);line-height:1.55}
+  .brief-output strong{color:var(--text);font-weight:600}
 
-  .podium {
-    display: grid; grid-template-columns: repeat(5, 1fr);
-    gap: 8px; align-items: end; min-height: 240px;
-  }
-  .podium-step {
-    background: var(--surface-2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 8px; text-align: center;
-    position: relative; overflow: hidden;
-    display: flex; flex-direction: column; justify-content: flex-end;
-  }
-  .podium-step:nth-child(1) {
-    background: var(--gold-soft); border-color: var(--gold);
-  }
-  .podium-step:nth-child(2) {
-    background: var(--info-soft); border-color: var(--info);
-  }
-  .podium-step:nth-child(3) {
-    background: var(--accent-soft); border-color: var(--accent);
-  }
-  .podium-rank {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem; font-weight: 700; line-height: 1;
-    color: var(--text);
-  }
-  .podium-title {
-    font-size: 11px; font-weight: 600; margin-top: 6px;
-    color: var(--text); line-height: 1.3;
-  }
-  .podium-val {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; font-weight: 700; margin-top: 6px;
-    color: var(--gold);
-  }
+  /* Modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+  .modal.open{display:flex}
+  .modal-box{background:var(--bg-elev);border:1px solid var(--border);border-radius:12px;padding:28px;max-width:460px;width:100%;box-shadow:var(--shadow-lg)}
+  .modal-box.wide{max-width:600px}
+  .modal-box h2{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:12px}
+  .modal-box p{color:var(--text-dim);margin-bottom:16px;font-size:14px;line-height:1.5}
+  .modal-box p code{background:var(--surface-2);padding:1px 6px;border-radius:4px;font-size:12px}
+  .modal-box .input{width:100%;margin-bottom:16px}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+  .modal-actions .btn.danger{background:transparent;border:1px solid var(--accent);color:var(--accent);margin-right:auto}
+  .modal-actions .btn.danger:hover{background:var(--accent);color:#fff}
 
-  /* Insights grid (natural-language cards) */
-  .insights-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 14px;
-  }
-  .insight {
-    background: var(--surface-2);
-    border: 1px solid var(--border-soft);
-    border-left: 3px solid var(--accent);
-    border-radius: 8px;
-    padding: 14px 16px;
-  }
-  .insight .ico {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 28px; height: 28px; border-radius: 6px;
-    background: var(--accent-soft); color: var(--accent);
-    font-size: 14px; margin-bottom: 8px;
-  }
-  .insight .h {
-    font-weight: 600; font-size: 14px; color: var(--text);
-    margin-bottom: 4px;
-  }
-  .insight .b {
-    color: var(--text-dim); font-size: 13px; line-height: 1.5;
-  }
-  .insight .b strong { color: var(--text); }
-  .insight.gold { border-left-color: var(--gold); }
-  .insight.gold .ico { background: var(--gold-soft); color: var(--gold); }
-  .insight.info { border-left-color: var(--info); }
-  .insight.info .ico { background: var(--info-soft); color: var(--info); }
-  .insight.ok { border-left-color: var(--ok); }
-  .insight.ok .ico { background: var(--ok-soft); color: var(--ok); }
+  /* Form grid */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .form-grid label.full{grid-column:1/-1}
+  .form-grid label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:var(--text-dim);letter-spacing:.04em;text-transform:uppercase}
+  .form-grid label .help{color:var(--text-faint);font-weight:400;font-size:11px;text-transform:none;letter-spacing:0}
+  .form-grid input,.form-grid select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;outline:none;text-transform:none;letter-spacing:0;font-weight:400}
+  .form-grid input:focus,.form-grid select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 
-  /* Brief output (AI streamed) */
-  .brief-output {
-    background: var(--surface-2);
-    border: 1px solid var(--border-soft);
-    border-radius: 8px;
-    padding: 20px 24px;
-    line-height: 1.65;
-    font-size: 14.5px;
-    min-height: 60px;
-  }
-  .brief-output h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem; font-weight: 700;
-    margin: 18px 0 8px; color: var(--text);
-    border: 0; padding: 0;
-  }
-  .brief-output h3:first-child { margin-top: 0; }
-  .brief-output h4 {
-    font-size: 12px; font-weight: 700; color: var(--accent);
-    text-transform: uppercase; letter-spacing: .08em;
-    margin: 16px 0 6px;
-  }
-  .brief-output p { margin: 8px 0; color: var(--text-dim); }
-  .brief-output ul { padding-left: 20px; margin: 6px 0; }
-  .brief-output li { margin: 4px 0; color: var(--text-dim); line-height: 1.55; }
-  .brief-output strong { color: var(--text); font-weight: 600; }
+  .btn{background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:13px;font-weight:500;transition:all .15s;text-align:center;display:inline-block}
+  .btn:hover{background:var(--surface-3);border-color:var(--text-faint)}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.primary:hover{background:var(--accent-deep);border-color:var(--accent-deep)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
 
-  /* ============================================================
-     SETTINGS MODAL
-     ============================================================ */
-  .modal {
-    position: fixed; inset: 0; background: rgba(0,0,0,.6);
-    z-index: 100; display: none; align-items: center; justify-content: center;
-    padding: 20px; backdrop-filter: blur(4px);
-  }
-  .modal.open { display: flex; }
-  .modal-box {
-    background: var(--bg-elev); border: 1px solid var(--border);
-    border-radius: 12px; padding: 28px;
-    max-width: 460px; width: 100%;
-    box-shadow: var(--shadow-lg);
-  }
-  .modal-box h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem; font-weight: 700; margin-bottom: 12px;
-  }
-  .modal-box p {
-    color: var(--text-dim); margin-bottom: 16px;
-    font-size: 14px; line-height: 1.5;
-  }
-  .modal-box p code {
-    background: var(--surface-2); padding: 1px 6px; border-radius: 4px;
-    font-size: 12px;
-  }
-  .modal-box .input { width: 100%; margin-bottom: 16px; }
-  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);background:var(--text);color:var(--bg);padding:12px 20px;border-radius:8px;font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);z-index:200;transition:transform .25s cubic-bezier(.4,0,.2,1);max-width:90vw}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .toast.error{background:var(--accent);color:#fff}
+  .toast.success{background:var(--ok);color:#fff}
 
-  /* ============================================================
-     UTILITIES
-     ============================================================ */
-  .hidden { display: none !important; }
+  .hidden{display:none!important}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:5px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--text-faint)}
 
-  /* ============================================================
-     ADMIN MODE
-     ============================================================ */
-  .admin-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 10px; background: var(--accent); color: white;
-    border-radius: 6px; font-size: 11px; font-weight: 700;
-    letter-spacing: .08em; text-transform: uppercase;
-    margin-left: 8px;
-  }
-  .admin-badge::before {
-    content: ""; width: 6px; height: 6px; border-radius: 50%;
-    background: white; box-shadow: 0 0 8px white;
-    animation: pulse 1.8s ease-in-out infinite;
-  }
-  @keyframes pulse { 50% { opacity: .4; } }
+  /* Loading state */
+  .loading-state{padding:60px 20px;text-align:center;color:var(--text-dim)}
+  .loading-state .big-spinner{display:inline-block;width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
 
-  .admin-actions {
-    display: none;
-    gap: 8px; margin-bottom: 16px;
-    padding: 12px 16px;
-    background: var(--accent-soft);
-    border: 1px solid var(--accent);
-    border-radius: 10px;
-    align-items: center; flex-wrap: wrap;
-  }
-  [data-admin="1"] .admin-actions { display: flex; }
-  .admin-actions .label {
-    font-size: 12px; font-weight: 600; color: var(--accent);
-    text-transform: uppercase; letter-spacing: .08em;
-  }
-  .admin-actions .spacer { flex: 1; }
-
-  .edit-pencil {
-    position: absolute; top: 16px; left: 16px;
-    background: var(--accent); color: white;
-    width: 28px; height: 28px; border: 0; border-radius: 6px;
-    display: none; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 13px; z-index: 3;
-    box-shadow: var(--shadow-sm);
-    opacity: 0; transition: opacity .15s, transform .15s;
-  }
-  [data-admin="1"] .edit-pencil { display: flex; }
-  .card:hover .edit-pencil { opacity: 1; }
-  .edit-pencil:hover { transform: scale(1.1); background: var(--accent-deep); }
-
-  /* Edit form */
-  .form-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-  }
-  .form-grid label.full { grid-column: 1 / -1; }
-  .form-grid label {
-    display: flex; flex-direction: column; gap: 6px;
-    font-size: 12px; font-weight: 600; color: var(--text-dim);
-    letter-spacing: .04em; text-transform: uppercase;
-  }
-  .form-grid label .help { color: var(--text-faint); font-weight: 400; font-size: 11px; text-transform: none; letter-spacing: 0; }
-  .form-grid input, .form-grid select {
-    background: var(--surface); color: var(--text);
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 10px 12px; font-size: 14px; outline: none;
-    transition: border-color .15s;
-    text-transform: none; letter-spacing: 0; font-weight: 400;
-  }
-  .form-grid input:focus, .form-grid select:focus {
-    border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
-  }
-  .form-check {
-    display: flex; gap: 16px; align-items: center;
-    grid-column: 1 / -1; padding-top: 6px;
-  }
-  .form-check label {
-    flex-direction: row; gap: 8px; align-items: center;
-    text-transform: none; letter-spacing: 0; color: var(--text);
-    font-weight: 500; font-size: 14px;
-  }
-  .form-check input { width: 18px; height: 18px; accent-color: var(--accent); }
-  .modal-box.wide { max-width: 600px; }
-  .modal-actions .btn.danger {
-    background: transparent; border-color: var(--accent);
-    color: var(--accent); margin-right: auto;
-  }
-  .modal-actions .btn.danger:hover { background: var(--accent); color: white; }
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120%);
-    background: var(--text); color: var(--bg);
-    padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 500;
-    box-shadow: var(--shadow-lg); z-index: 200;
-    transition: transform .25s cubic-bezier(.4,0,.2,1);
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.error { background: var(--accent); color: white; }
-  .toast.success { background: var(--ok); color: white; }
-
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 5px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
-
-  /* ============================================================
-     RESPONSIVE
-     ============================================================ */
-  @media (max-width: 1024px) {
-    .header-inner { padding: 16px 24px; }
-    main { padding: 32px 24px 60px; }
-    .stat.wide { grid-column: span 2; }
-    .analytics-grid { grid-template-columns: 1fr; }
-    .bar-row { grid-template-columns: 160px 1fr 70px; }
-  }
-  @media (max-width: 720px) {
-    .header-inner { padding: 14px 18px; }
-    main { padding: 24px 18px 60px; }
-    .brand { width: 100%; }
-    .brand h1 { font-size: 1.4rem; }
-    .brand .tagline { font-size: 11px; }
-    .header-actions { width: 100%; justify-content: space-between; }
-    .nav-tabs { flex: 1; }
-    .nav-tab { flex: 1; padding: 8px 10px; font-size: 13px; }
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .stat.wide { grid-column: span 2; }
-    .stat .value { font-size: 1.6rem; }
-    .filters { gap: 8px; }
-    .input { width: 100%; min-width: 0; }
-    .grid { grid-template-columns: 1fr; }
-    .drawer { width: 100%; border-left: 0; border-top: 1px solid var(--border); }
-    .podium { grid-template-columns: repeat(2, 1fr); min-height: auto; }
-    .podium-step { min-height: 120px; }
-    .bar-row { grid-template-columns: 120px 1fr 60px; gap: 10px; font-size: 12px; }
-    .timeline-track { min-width: 700px; }
-    .card-actions { flex-direction: column; }
-    .btn { padding: 11px; }
-  }
-  @media (max-width: 420px) {
-    .stats-grid { grid-template-columns: 1fr; }
-    .stat.wide { grid-column: span 1; }
-  }
-  @media (hover: none) {
-    .btn, .nav-tab, .icon-btn { min-height: 40px; }
-  }
+  @media (max-width:1024px){.header-inner{padding:16px 24px}main{padding:24px 24px 60px}.stat.wide{grid-column:span 2}.analytics-grid{grid-template-columns:1fr}.bar-row{grid-template-columns:160px 1fr 70px}}
+  @media (max-width:720px){.header-inner{padding:14px 18px}main{padding:18px 18px 60px}.brand{width:100%}.brand h1{font-size:1.4rem}.brand .tagline{font-size:11px}.header-actions{width:100%;justify-content:space-between}.nav-tabs{flex:1}.nav-tab{flex:1;padding:8px 10px;font-size:13px}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat.wide{grid-column:span 2}.size-control{margin-left:0;width:100%;justify-content:center}.size-btn{flex:1;padding:8px;font-size:13px}.filters{gap:8px}.input{width:100%;min-width:0}.drawer{width:100%;border-left:0;border-top:1px solid var(--border)}.podium{grid-template-columns:repeat(2,1fr);min-height:auto}.podium-step{min-height:120px}.bar-row{grid-template-columns:120px 1fr 60px;gap:10px;font-size:12px}.detail-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
+  @media (max-width:420px){.stats-grid{grid-template-columns:1fr}.stat.wide{grid-column:span 1}}
+  @media (hover:none){.btn,.nav-tab,.icon-btn,.size-btn{min-height:40px}.edit-pencil{opacity:1}}
 </style>
 </head>
 <body>
@@ -853,7 +264,7 @@
       <h1>Pete's <span class="accent">Corner</span></h1>
       <span class="tagline">
         <span id="est-count">—</span> issues
-        <span class="dot">·</span> est. <span id="est-year">—</span>
+        <span class="dot">·</span> <span id="est-series">—</span> series
       </span>
     </div>
     <div class="header-actions">
@@ -869,7 +280,7 @@
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
       </button>
-      <button class="icon-btn" id="open-settings" title="API key settings">
+      <button class="icon-btn" id="open-settings" title="Settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"/>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -880,28 +291,27 @@
 </header>
 
 <main>
-  <!-- Collection -->
   <section id="view-collection">
     <div class="section-head">
       <h2>Collection</h2>
-      <span class="meta">A curated long-box · bagged &amp; boarded</span>
+      <span class="meta">CovrPrice valuations · last sync via CSV upload</span>
     </div>
 
     <div class="stats-grid">
       <div class="stat">
         <div class="label">Total Value</div>
-        <div class="value money" id="stat-value">$0</div>
-        <div class="sub" id="stat-avg">Avg —</div>
+        <div class="value money" id="stat-value">—</div>
+        <div class="sub" id="stat-avg">—</div>
       </div>
       <div class="stat">
-        <div class="label">Key Issues</div>
-        <div class="value" id="stat-keys">0</div>
-        <div class="sub" id="stat-keys-pct">— of collection</div>
+        <div class="label">Total Issues</div>
+        <div class="value" id="stat-count">—</div>
+        <div class="sub" id="stat-series-sub">—</div>
       </div>
       <div class="stat">
-        <div class="label">CGC Graded</div>
-        <div class="value" id="stat-cgc">0</div>
-        <div class="sub">Slabs in vault</div>
+        <div class="label">Appreciation</div>
+        <div class="value" id="stat-markup">—</div>
+        <div class="sub" id="stat-cover-sum">—</div>
       </div>
       <div class="stat wide">
         <div class="label">Publisher Distribution</div>
@@ -915,22 +325,21 @@
       <span class="label">Edit mode</span>
       <span class="spacer"></span>
       <button class="btn primary" id="add-comic">+ Add Comic</button>
-      <button class="btn" id="export-json">Export JSON</button>
+      <button class="btn" id="export-csv">Export CSV</button>
       <button class="btn" id="push-github">Save to GitHub</button>
       <button class="btn" id="exit-admin">Exit</button>
     </div>
 
     <div class="filters">
-      <input type="text" class="input" id="search" placeholder="Search title…" />
+      <input type="text" class="input" id="search" placeholder="Search series, issue, artist…" />
       <select class="select" id="filter-pub"><option value="">All publishers</option></select>
-      <select class="select" id="filter-cond">
-        <option value="">All conditions</option>
-        <option value="NM">NM</option>
-        <option value="VF">VF</option>
-        <option value="VG">VG</option>
+      <select class="select" id="filter-sort">
+        <option value="value-desc">Sort: Value ↓</option>
+        <option value="value-asc">Sort: Value ↑</option>
+        <option value="date-desc">Sort: Newest first</option>
+        <option value="date-asc">Sort: Oldest first</option>
+        <option value="series-asc">Sort: Series A→Z</option>
       </select>
-      <label class="toggle"><input type="checkbox" id="filter-key"/> Key only</label>
-      <label class="toggle"><input type="checkbox" id="filter-cgc"/> CGC only</label>
       <div class="size-control" role="group" aria-label="Card size">
         <button class="size-btn active" data-size="s">S</button>
         <button class="size-btn" data-size="m">M</button>
@@ -938,62 +347,35 @@
       </div>
     </div>
 
-    <div class="grid" id="grid"></div>
+    <div class="result-count" id="result-count">Loading…</div>
+    <div class="grid" id="grid">
+      <div class="loading-state" style="grid-column:1/-1"><div class="big-spinner"></div>Loading collection from CSV…</div>
+    </div>
+    <div class="load-more-wrap"><button class="load-more hidden" id="load-more">Load more</button></div>
   </section>
 
-  <!-- Analytics -->
   <section id="view-analytics" class="hidden">
     <div class="section-head">
       <h2>Analytics</h2>
       <span class="meta">Aggregate views across the collection</span>
     </div>
-    <!-- Smart insights -->
-    <div class="a-panel" style="margin-bottom: 20px;">
-      <h3>Collection Insights</h3>
-      <div id="insights-grid" class="insights-grid"></div>
-    </div>
-
-    <!-- AI Brief -->
-    <div class="a-panel" style="margin-bottom: 20px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom: 14px;">
-        <h3 style="margin:0;">AI Collection Brief</h3>
-        <button class="btn primary" id="generate-brief" style="flex: 0 0 auto; max-width: 200px;">Generate Brief</button>
+    <div class="a-panel" style="margin-bottom:20px"><h3>Collection Insights</h3><div id="insights-grid" class="insights-grid"></div></div>
+    <div class="a-panel" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+        <h3 style="margin:0">AI Collection Brief</h3>
+        <button class="btn primary" id="generate-brief" style="flex:0 0 auto;max-width:200px">Generate Brief</button>
       </div>
-      <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 14px;">A senior comic appraiser's take on this collection — strengths, gaps, and what to do next. Streams from Claude.</p>
-      <div id="brief-output" class="brief-output">
-        <p style="color: var(--text-faint); font-style: italic;">Click "Generate Brief" to analyze the full collection.</p>
-      </div>
+      <p style="color:var(--text-dim);font-size:13px;margin-bottom:14px">A senior comic appraiser's read on the collection. Streams from Claude.</p>
+      <div id="brief-output" class="brief-output"><p style="color:var(--text-faint);font-style:italic">Click "Generate Brief" to analyze the collection.</p></div>
     </div>
-
     <div class="analytics-grid">
-      <div class="a-panel" style="grid-column: 1 / -1;">
-        <h3>Value by Series</h3>
-        <div id="series-bars"></div>
-      </div>
-      <div class="a-panel">
-        <h3>Value by Era</h3>
-        <div class="donut-wrap">
-          <svg class="donut" viewBox="0 0 100 100" id="era-donut">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface-3)" stroke-width="14"/>
-          </svg>
-          <div class="donut-legend" id="era-legend"></div>
-        </div>
-      </div>
-      <div class="a-panel">
-        <h3>Top 5 Most Valuable</h3>
-        <div class="podium" id="podium"></div>
-      </div>
-      <div class="a-panel" style="grid-column: 1 / -1;">
-        <h3>Publication Timeline</h3>
-        <div class="timeline">
-          <div class="timeline-track" id="timeline"></div>
-        </div>
-      </div>
+      <div class="a-panel" style="grid-column:1/-1"><h3>Top 20 Series by Total Value</h3><div id="series-bars"></div></div>
+      <div class="a-panel"><h3>Value by Era</h3><div class="donut-wrap"><svg class="donut" viewBox="0 0 100 100" id="era-donut"></svg><div class="donut-legend" id="era-legend"></div></div></div>
+      <div class="a-panel"><h3>Top 5 Most Valuable</h3><div class="podium" id="podium"></div></div>
     </div>
   </section>
 </main>
 
-<!-- Drawer -->
 <aside class="drawer" id="drawer">
   <div class="drawer-head">
     <div>
@@ -1005,60 +387,41 @@
   <div class="drawer-body" id="drawer-body"></div>
 </aside>
 
-<!-- Edit Comic Modal -->
+<!-- Edit Modal -->
 <div class="modal" id="edit-modal">
   <div class="modal-box wide">
     <h2 id="edit-title">Edit Comic</h2>
     <form id="edit-form" autocomplete="off" onsubmit="return false">
       <div class="form-grid">
-        <label class="full">Title
-          <input type="text" name="title" required />
+        <label class="full">Series
+          <input type="text" name="series" required />
         </label>
-        <label>Issue #
+        <label>Issue
           <input type="text" name="issue" placeholder="e.g. 1A, 361B" required />
-        </label>
-        <label>Volume
-          <input type="number" name="vol" min="1" value="1" required />
-        </label>
-        <label>Edition
-          <input type="text" name="edition" placeholder="e.g. Direct Edition" />
         </label>
         <label>Publisher
           <select name="publisher" required>
-            <option>Marvel</option><option>DC</option><option>Image</option>
-            <option>Dark Horse</option><option>IDW</option><option>Other</option>
+            <option>Marvel Comics</option><option>DC Comics</option><option>Image Comics</option>
+            <option>Dark Horse Comics</option><option>IDW Publishing</option><option>Eclipse Comics</option>
+            <option>First Comics</option><option>Other</option>
           </select>
         </label>
-        <label>Series
-          <input type="text" name="series" placeholder="e.g. Amazing Spider-Man" required />
+        <label class="full">Artist <span class="help">credits separated by " | "</span>
+          <input type="text" name="artist" placeholder="e.g. Mike Zeck" />
         </label>
-        <label>Date
+        <label>Release Date
           <input type="date" name="date" required />
         </label>
-        <label>Condition
-          <select name="condition" required>
-            <option value="NM">NM — Near Mint</option>
-            <option value="VF">VF — Very Fine</option>
-            <option value="VG">VG — Very Good</option>
-            <option value="GD">GD — Good</option>
-            <option value="FR">FR — Fair</option>
-          </select>
+        <label>Cover Price (original, $)
+          <input type="number" name="coverPrice" min="0" step="0.01" />
         </label>
-        <label>Price (CLZ value, USD)
-          <input type="number" name="value" min="0" step="1" required />
+        <label>CovrPrice Value (current, $)
+          <input type="number" name="value" min="0" step="0.5" required />
         </label>
-        <label>CGC Grade <span class="help">leave blank if raw</span>
-          <input type="number" name="cgc" min="0" max="10" step="0.1" placeholder="9.8" />
-        </label>
-        <label class="full">Cover Image URL <span class="help">direct .jpg/.png link</span>
-          <input type="url" name="cover" placeholder="https://..." />
-        </label>
-        <div class="form-check">
-          <label><input type="checkbox" name="key" /> Key Issue 🔑</label>
-        </div>
+        <label></label>
       </div>
     </form>
-    <div class="modal-actions" style="margin-top: 20px;">
+    <div class="modal-actions" style="margin-top:20px">
       <button class="btn danger" id="edit-delete">Delete</button>
       <button class="btn" id="edit-cancel">Cancel</button>
       <button class="btn primary" id="edit-save">Save</button>
@@ -1070,9 +433,9 @@
 <div class="modal" id="settings-modal">
   <div class="modal-box">
     <h2>Settings</h2>
-    <p style="margin-top: -6px;"><strong style="color:var(--text)">Anthropic API Key</strong> — enables AI Insights and listing generation. Stored only in this browser's <code>localStorage</code>.</p>
+    <p style="margin-top:-6px"><strong style="color:var(--text)">Anthropic API Key</strong> — enables AI Insights, eBay Listings, and the Collection Brief. Stored only in this browser's <code>localStorage</code>.</p>
     <input type="password" class="input" id="api-key-input" placeholder="sk-ant-..." />
-    <p style="margin-top: 16px;"><strong style="color:var(--text)">GitHub Personal Access Token</strong> <span style="color:var(--text-faint)">(admin only)</span> — needed to push collection edits back to the repo. Requires <code>repo</code> scope. <a href="https://github.com/settings/tokens/new?scopes=repo&description=Pete's%20Corner" target="_blank" style="color:var(--accent)">Create one →</a></p>
+    <p style="margin-top:16px"><strong style="color:var(--text)">GitHub Personal Access Token</strong> <span style="color:var(--text-faint)">(admin only)</span> — needed to push edits back to the repo. Requires <code>repo</code> scope. <a href="https://github.com/settings/tokens/new?scopes=repo&description=Pete's%20Corner" target="_blank" style="color:var(--accent)">Create one →</a></p>
     <input type="password" class="input" id="gh-token-input" placeholder="ghp_..." />
     <div class="modal-actions">
       <button class="btn" id="clear-key">Clear All</button>
@@ -1086,65 +449,14 @@
 
 <script>
 // ============================================================
-// DATA — defaults, overridable via localStorage edits
+// CONFIG
 // ============================================================
-const DEFAULT_COMICS = [
-  { id: 1, title: "The Amazing Spider-Man", vol: 1, issue: "361B", edition: "Newsstand Edition",
-    publisher: "Marvel", date: "1992-04-11", condition: "NM", value: 106, key: true, cgc: null, series: "Amazing Spider-Man",
-    cover: "https://cdn.marvel.com/u/prod/marvel/i/mg/f/03/57d04279039c9/portrait_uncanny.jpg" },
-  { id: 2, title: "Spawn", vol: 1, issue: "1B", edition: "Newsstand Edition",
-    publisher: "Image", date: "1992-05-01", condition: "NM", value: 105, key: true, cgc: null, series: "Spawn",
-    cover: "https://upload.wikimedia.org/wikipedia/en/d/d9/Spawn_Classic.jpg" },
-  { id: 3, title: "Aliens", vol: 1, issue: "1A", edition: "Regular Edition",
-    publisher: "Dark Horse", date: "1988-05-01", condition: "VF", value: 95, key: true, cgc: null, series: "Aliens",
-    cover: "https://images.darkhorse.com/covers/400/a/al1.jpg" },
-  { id: 4, title: "Tales to Astonish", vol: 1, issue: "93A", edition: "Regular Edition",
-    publisher: "Marvel", date: "1967-04-11", condition: "VG", value: 94, key: true, cgc: null, series: "Tales to Astonish",
-    cover: "https://cdn.marvel.com/u/prod/marvel/i/mg/9/b0/536d437b80ffd/portrait_uncanny.jpg" },
-  { id: 5, title: "The Maxx", vol: 1, issue: "1A", edition: "Direct Edition",
-    publisher: "Image", date: "1993-03-01", condition: "NM", value: 83, key: true, cgc: 9.8, series: "The Maxx",
-    cover: "https://upload.wikimedia.org/wikipedia/en/6/68/The_Maxx_cover_1.jpg" },
-  { id: 6, title: "Thundercats", vol: 1, issue: "1A", edition: "Direct Edition",
-    publisher: "Marvel", date: "1985-12-01", condition: "VF", value: 79, key: true, cgc: null, series: "Thundercats",
-    cover: "https://upload.wikimedia.org/wikipedia/en/e/ef/Thundercats_no_1.png" },
-  { id: 7, title: "Predator", vol: 1, issue: "1A", edition: "Regular Edition",
-    publisher: "Dark Horse", date: "1989-05-01", condition: "NM", value: 78, key: true, cgc: null, series: "Predator",
-    cover: "https://images.darkhorse.com/covers/400/p/pr1.jpg" },
-  { id: 8, title: "Web of Spider-Man", vol: 1, issue: "32B", edition: "Direct Edition",
-    publisher: "Marvel", date: "1987-07-28", condition: "VF", value: 71, key: true, cgc: null, series: "Web of Spider-Man",
-    cover: "https://cdn.marvel.com/u/prod/marvel/i/mg/4/50/67c7857303ee9/portrait_uncanny.jpg" },
-  { id: 9, title: "The Sandman", vol: 2, issue: "1A", edition: "Regular Edition",
-    publisher: "DC", date: "1988-11-29", condition: "NM", value: 67, key: true, cgc: null, series: "The Sandman",
-    cover: "https://upload.wikimedia.org/wikipedia/en/8/85/Sandman_no.1_%28Modern_Age%29.comiccover.jpg" },
-  { id: 10, title: "NYX", vol: 1, issue: "4", edition: "Regular Edition",
-    publisher: "Marvel", date: "2004-05-26", condition: "NM", value: 60, key: true, cgc: null, series: "NYX",
-    cover: "https://cdn.marvel.com/u/prod/marvel/i/mg/d/60/5d4ad87fe75d9/portrait_uncanny.jpg" },
-  { id: 11, title: "NYX", vol: 1, issue: "4", edition: "Regular Edition (Copy 2)",
-    publisher: "Marvel", date: "2004-05-26", condition: "NM", value: 60, key: true, cgc: null, series: "NYX",
-    cover: "https://cdn.marvel.com/u/prod/marvel/i/mg/d/60/5d4ad87fe75d9/portrait_uncanny.jpg" },
-  { id: 12, title: "The Maxx", vol: 1, issue: "1C", edition: "Glow In The Dark Variant",
-    publisher: "Image", date: "1993-03-01", condition: "NM", value: 59, key: true, cgc: null, series: "The Maxx",
-    cover: "https://upload.wikimedia.org/wikipedia/en/6/68/The_Maxx_cover_1.jpg" },
-  { id: 13, title: "G.I. Joe: A Real American Hero", vol: 1, issue: "212A", edition: "Cover A S L Gallant",
-    publisher: "IDW", date: "2015-04-01", condition: "NM", value: 58, key: false, cgc: null, series: "G.I. Joe: A Real American Hero",
-    cover: "https://www.yojoe.com/images/resize/w/290/imagestore/5539/73849.jpg" },
-];
-
-// Load comics from localStorage if present, else use defaults
-let COMICS = (() => {
-  try {
-    const stored = localStorage.getItem("petes_corner_comics");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length) return parsed;
-    }
-  } catch(e) {}
-  return JSON.parse(JSON.stringify(DEFAULT_COMICS));
-})();
-
-function persistComics() {
-  localStorage.setItem("petes_corner_comics", JSON.stringify(COMICS));
-}
+const MODEL = "claude-sonnet-4-20250514";
+const ADMIN_KEY = "petes-corner-2026";
+const REPO_OWNER = "fivetran-jasonchletsos";
+const REPO_NAME = "petes-corner";
+const CSV_PATH = "comics.csv";
+const PAGE_SIZE = 60;
 
 const PUBLISHER_COLORS = {
   "Marvel": "#ef4444",
@@ -1152,11 +464,134 @@ const PUBLISHER_COLORS = {
   "Image": "#f59e0b",
   "Dark Horse": "#10b981",
   "IDW": "#8b5cf6",
-  "Other": "#6b7280"
+  "Eclipse": "#ec4899",
+  "First": "#06b6d4",
+  "Valiant": "#a855f7",
+  "Other": "#6b7280",
 };
 
+function normalizePublisher(raw) {
+  if (!raw) return "Other";
+  const s = raw.toLowerCase();
+  if (s.includes("marvel")) return "Marvel";
+  if (s.includes("dc ")) return "DC";
+  if (s === "dc comics" || s.startsWith("dc")) return "DC";
+  if (s.includes("image")) return "Image";
+  if (s.includes("dark horse")) return "Dark Horse";
+  if (s.includes("idw")) return "IDW";
+  if (s.includes("eclipse")) return "Eclipse";
+  if (s.includes("first comics")) return "First";
+  if (s.includes("valiant")) return "Valiant";
+  return raw.replace(/\s*comics?$/i, "").trim() || "Other";
+}
+
 // ============================================================
-// THEME
+// CSV PARSER (handles quoted fields, escaped quotes)
+// ============================================================
+function parseCSV(text) {
+  const rows = [];
+  let row = [], cell = "", inQuote = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuote) {
+      if (ch === '"') {
+        if (text[i+1] === '"') { cell += '"'; i++; }
+        else inQuote = false;
+      } else cell += ch;
+    } else {
+      if (ch === '"') inQuote = true;
+      else if (ch === ',') { row.push(cell); cell = ""; }
+      else if (ch === '\n' || ch === '\r') {
+        if (cell.length || row.length) { row.push(cell); rows.push(row); row = []; cell = ""; }
+        if (ch === '\r' && text[i+1] === '\n') i++;
+      } else cell += ch;
+    }
+  }
+  if (cell.length || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+function csvToComics(text) {
+  const rows = parseCSV(text);
+  if (!rows.length) return [];
+  const header = rows[0].map(h => h.trim().toLowerCase());
+  const col = (name) => header.findIndex(h => h === name.toLowerCase());
+  const ci = {
+    value: col("covrprice value"),
+    series: col("series"),
+    issue: col("issue"),
+    publisher: col("publisher"),
+    artist: col("artist"),
+    coverPrice: col("cover price"),
+    date: col("release date"),
+  };
+  const comics = [];
+  for (let r = 1; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row[ci.series]) continue;
+    const dateStr = row[ci.date];
+    let date = "";
+    if (dateStr) {
+      const parsed = new Date(dateStr);
+      if (!isNaN(parsed.getTime())) date = parsed.toISOString().slice(0, 10);
+    }
+    comics.push({
+      id: r,
+      series: (row[ci.series] || "").trim(),
+      issue: (row[ci.issue] || "").trim(),
+      publisherRaw: (row[ci.publisher] || "").trim(),
+      publisher: normalizePublisher(row[ci.publisher]),
+      artist: (row[ci.artist] || "").trim(),
+      coverPrice: parseFloat(row[ci.coverPrice]) || 0,
+      value: parseFloat(row[ci.value]) || 0,
+      date,
+    });
+  }
+  return comics;
+}
+
+// ============================================================
+// DATA
+// ============================================================
+let COMICS = [];
+let filtered = [];
+let visibleCount = PAGE_SIZE;
+
+async function loadComics() {
+  // Apply localStorage overrides if any
+  const overridesRaw = localStorage.getItem("petes_corner_overrides");
+  const overrides = overridesRaw ? JSON.parse(overridesRaw) : {};
+  const newAdds = JSON.parse(localStorage.getItem("petes_corner_adds") || "[]");
+  const deletes = new Set(JSON.parse(localStorage.getItem("petes_corner_deletes") || "[]"));
+
+  const res = await fetch(CSV_PATH + "?v=" + Date.now());
+  if (!res.ok) throw new Error("Couldn't load comics.csv");
+  const text = await res.text();
+  COMICS = csvToComics(text).filter(c => !deletes.has(c.id));
+  // apply overrides
+  COMICS = COMICS.map(c => overrides[c.id] ? { ...c, ...overrides[c.id] } : c);
+  // append adds
+  if (newAdds.length) COMICS.push(...newAdds);
+}
+
+function persistOverride(id, patch) {
+  const cur = JSON.parse(localStorage.getItem("petes_corner_overrides") || "{}");
+  cur[id] = { ...(cur[id] || {}), ...patch };
+  localStorage.setItem("petes_corner_overrides", JSON.stringify(cur));
+}
+function persistAdd(comic) {
+  const adds = JSON.parse(localStorage.getItem("petes_corner_adds") || "[]");
+  adds.push(comic);
+  localStorage.setItem("petes_corner_adds", JSON.stringify(adds));
+}
+function persistDelete(id) {
+  const dels = JSON.parse(localStorage.getItem("petes_corner_deletes") || "[]");
+  if (!dels.includes(id)) dels.push(id);
+  localStorage.setItem("petes_corner_deletes", JSON.stringify(dels));
+}
+
+// ============================================================
+// THEME / SIZE
 // ============================================================
 function setTheme(name) {
   document.documentElement.setAttribute("data-theme", name);
@@ -1165,14 +600,10 @@ function setTheme(name) {
   document.getElementById("icon-moon").classList.toggle("hidden", name === "dark");
 }
 document.getElementById("theme-toggle").addEventListener("click", () => {
-  const cur = document.documentElement.getAttribute("data-theme");
-  setTheme(cur === "dark" ? "light" : "dark");
+  setTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
 });
 setTheme(localStorage.getItem("vault_theme") || "dark");
 
-// ============================================================
-// CARD SIZE
-// ============================================================
 function setSize(size) {
   document.documentElement.setAttribute("data-size", size);
   localStorage.setItem("vault_size", size);
@@ -1182,233 +613,242 @@ document.querySelectorAll(".size-btn").forEach(b => b.addEventListener("click", 
 setSize(localStorage.getItem("vault_size") || "s");
 
 // ============================================================
-// STATS
+// STATS / PUBLISHER BAR
 // ============================================================
 function renderStats() {
-  const total = COMICS.reduce((s,c) => s + c.value, 0);
-  const keys = COMICS.filter(c => c.key).length;
-  const cgc = COMICS.filter(c => c.cgc).length;
-  const years = COMICS.map(c => new Date(c.date).getFullYear());
-  document.getElementById("stat-value").textContent = "$" + total.toLocaleString();
-  document.getElementById("stat-avg").textContent = `Avg $${Math.round(total/COMICS.length)} per book`;
-  document.getElementById("stat-keys").textContent = keys;
-  document.getElementById("stat-keys-pct").textContent = `${Math.round(keys/COMICS.length*100)}% of collection`;
-  document.getElementById("stat-cgc").textContent = cgc;
-  document.getElementById("est-year").textContent = Math.min(...years);
-  document.getElementById("est-count").textContent = COMICS.length;
+  const total = COMICS.reduce((s, c) => s + c.value, 0);
+  const coverTotal = COMICS.reduce((s, c) => s + c.coverPrice, 0);
+  const seriesSet = new Set(COMICS.map(c => c.series));
+  const markup = coverTotal > 0 ? ((total - coverTotal) / coverTotal * 100) : 0;
+
+  document.getElementById("stat-value").textContent = "$" + Math.round(total).toLocaleString();
+  document.getElementById("stat-avg").textContent = `Avg $${(total / Math.max(COMICS.length, 1)).toFixed(2)} per book`;
+  document.getElementById("stat-count").textContent = COMICS.length.toLocaleString();
+  document.getElementById("stat-series-sub").textContent = `${seriesSet.size} unique series`;
+  document.getElementById("stat-markup").textContent = (markup >= 0 ? "+" : "") + markup.toFixed(0) + "%";
+  document.getElementById("stat-cover-sum").textContent = `Cover total $${Math.round(coverTotal).toLocaleString()} → now $${Math.round(total).toLocaleString()}`;
+  document.getElementById("est-count").textContent = COMICS.length.toLocaleString();
+  document.getElementById("est-series").textContent = seriesSet.size;
 }
 
 function renderPublisherBar() {
   const groups = {};
   COMICS.forEach(c => { groups[c.publisher] = (groups[c.publisher] || 0) + c.value; });
-  const total = Object.values(groups).reduce((s,v) => s+v, 0);
-  const sorted = Object.entries(groups).sort((a,b) => b[1] - a[1]);
+  const total = Object.values(groups).reduce((s, v) => s + v, 0);
+  const sorted = Object.entries(groups).sort((a, b) => b[1] - a[1]);
   document.getElementById("pub-bar").innerHTML = sorted.map(([pub, val]) =>
-    `<div class="pub-seg" style="width:${(val/total*100).toFixed(1)}%;background:${PUBLISHER_COLORS[pub] || PUBLISHER_COLORS.Other}" title="${pub}: $${val}"></div>`
+    `<div class="pub-seg" style="width:${(val/total*100).toFixed(2)}%;background:${PUBLISHER_COLORS[pub] || PUBLISHER_COLORS.Other}" title="${pub}: $${Math.round(val)}"></div>`
   ).join("");
-  document.getElementById("pub-legend").innerHTML = sorted.map(([pub, val]) =>
-    `<span><span class="pub-dot" style="background:${PUBLISHER_COLORS[pub] || PUBLISHER_COLORS.Other}"></span>${pub} <strong>$${val}</strong></span>`
-  ).join("");
+  document.getElementById("pub-legend").innerHTML = sorted.slice(0, 8).map(([pub, val]) =>
+    `<span><span class="pub-dot" style="background:${PUBLISHER_COLORS[pub] || PUBLISHER_COLORS.Other}"></span>${pub} <strong>$${Math.round(val).toLocaleString()}</strong></span>`
+  ).join("") + (sorted.length > 8 ? `<span style="color:var(--text-faint)">+${sorted.length - 8} more</span>` : "");
+  // Populate filter
   const filt = document.getElementById("filter-pub");
   filt.innerHTML = '<option value="">All publishers</option>' + sorted.map(([p]) => `<option value="${p}">${p}</option>`).join("");
 }
 
 // ============================================================
-// GRID
+// CARDS GRID (paginated)
 // ============================================================
-function condClass(c) { return c === "NM" ? "nm" : c === "VF" ? "vf" : c === "VG" ? "vg" : ""; }
+function escapeHTML(s) { return (s || "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
 function cardHTML(c) {
-  const dateStr = new Date(c.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
-  const coverImg = c.cover
-    ? `<img src="${c.cover}" alt="${c.title} #${c.issue} cover" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="cover-fallback" style="display:none">No cover available</div>`
-    : `<div class="cover-fallback" style="display:flex">No cover</div>`;
+  const year = c.date ? new Date(c.date).getFullYear() : "—";
+  const markupPct = c.coverPrice > 0 ? Math.round((c.value - c.coverPrice) / c.coverPrice * 100) : null;
+  const artistShort = c.artist ? c.artist.split(" | ")[0] : "";
   return `
     <div class="card" data-id="${c.id}">
       <button class="edit-pencil" data-action="edit" data-id="${c.id}" title="Edit">✎</button>
-      <div class="card-corner">#${c.issue}</div>
-      <div class="card-cover">${coverImg}</div>
-      <div class="card-publisher">${c.publisher} · Vol. ${c.vol}</div>
-      <h3>${c.title}</h3>
-      <div class="card-edition">${c.edition}</div>
-      <div class="card-badges">
-        <span class="badge ${condClass(c.condition)}">${c.condition}</span>
-        ${c.cgc ? `<span class="badge cgc">CGC ${c.cgc}</span>` : ""}
-        ${c.key ? `<span class="badge key">🔑 Key</span>` : ""}
-      </div>
-      <div class="card-value">$${c.value}<small>CLZ ESTIMATED</small></div>
+      <div class="card-corner">#${escapeHTML(c.issue)}</div>
+      <div class="card-publisher">${c.publisher}</div>
+      <h3>${escapeHTML(c.series)}</h3>
+      <div class="card-artist">${artistShort ? "by " + escapeHTML(artistShort) : "&nbsp;"}</div>
+      <div class="card-value">$${c.value.toFixed(2)}<small>COVRPRICE VALUE</small></div>
       <div class="card-meta">
-        <span>${dateStr}</span>
-      </div>
-      <div class="card-actions">
-        <button class="btn primary" data-action="ai" data-id="${c.id}">AI Insights</button>
-        <button class="btn" data-action="ebay" data-id="${c.id}">eBay Listing</button>
+        <span>${year}</span>
+        ${markupPct !== null ? `<span class="markup">${markupPct >= 0 ? "+" : ""}${markupPct}%</span>` : '<span>&nbsp;</span>'}
       </div>
     </div>`;
 }
 
-function renderGrid(list) {
+function renderGrid() {
   const grid = document.getElementById("grid");
-  grid.innerHTML = list.map(cardHTML).join("");
-  grid.querySelectorAll(".card").forEach((card, i) => {
-    setTimeout(() => card.classList.add("in"), Math.min(i*40, 600));
-  });
+  const slice = filtered.slice(0, visibleCount);
+  grid.innerHTML = slice.map(cardHTML).join("");
   grid.querySelectorAll("[data-action]").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       const id = +btn.dataset.id;
-      const comic = COMICS.find(c => c.id === id);
-      if (btn.dataset.action === "ai") openInsights(comic);
-      if (btn.dataset.action === "ebay") openEbay(comic);
-      if (btn.dataset.action === "edit") openEditModal(comic);
+      const c = COMICS.find(x => x.id === id);
+      if (btn.dataset.action === "edit") openEditModal(c);
     });
   });
+  grid.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = +card.dataset.id;
+      openDetails(COMICS.find(c => c.id === id));
+    });
+  });
+  const loadBtn = document.getElementById("load-more");
+  loadBtn.classList.toggle("hidden", visibleCount >= filtered.length);
+  loadBtn.textContent = `Load more (${Math.min(PAGE_SIZE, filtered.length - visibleCount)} of ${filtered.length - visibleCount} remaining)`;
+  document.getElementById("result-count").textContent = `Showing ${slice.length} of ${filtered.length.toLocaleString()} ${filtered.length === 1 ? "comic" : "comics"}${COMICS.length !== filtered.length ? ` (filtered from ${COMICS.length.toLocaleString()})` : ""}`;
 }
 
 function applyFilters() {
-  const q = document.getElementById("search").value.toLowerCase();
+  const q = document.getElementById("search").value.toLowerCase().trim();
   const pub = document.getElementById("filter-pub").value;
-  const cond = document.getElementById("filter-cond").value;
-  const keyOnly = document.getElementById("filter-key").checked;
-  const cgcOnly = document.getElementById("filter-cgc").checked;
-  renderGrid(COMICS.filter(c => {
-    if (q && !c.title.toLowerCase().includes(q)) return false;
+  const sort = document.getElementById("filter-sort").value;
+  filtered = COMICS.filter(c => {
     if (pub && c.publisher !== pub) return false;
-    if (cond && c.condition !== cond) return false;
-    if (keyOnly && !c.key) return false;
-    if (cgcOnly && !c.cgc) return false;
+    if (q) {
+      const hay = (c.series + " " + c.issue + " " + c.artist).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
     return true;
-  }));
+  });
+  const [field, dir] = sort.split("-");
+  filtered.sort((a, b) => {
+    let av, bv;
+    if (field === "value") { av = a.value; bv = b.value; }
+    else if (field === "date") { av = a.date || ""; bv = b.date || ""; }
+    else if (field === "series") { av = a.series.toLowerCase(); bv = b.series.toLowerCase(); }
+    if (av < bv) return dir === "asc" ? -1 : 1;
+    if (av > bv) return dir === "asc" ? 1 : -1;
+    return 0;
+  });
+  visibleCount = PAGE_SIZE;
+  renderGrid();
+}
+
+document.getElementById("load-more").addEventListener("click", () => {
+  visibleCount += PAGE_SIZE;
+  renderGrid();
+});
+["search","filter-pub","filter-sort"].forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
+
+// ============================================================
+// DETAILS DRAWER (click card)
+// ============================================================
+const drawer = document.getElementById("drawer");
+document.getElementById("drawer-close").addEventListener("click", () => drawer.classList.remove("open"));
+
+function openDetails(c) {
+  document.getElementById("drawer-title").textContent = `${c.series} #${c.issue}`;
+  document.getElementById("drawer-sub").textContent = `${c.publisher}${c.date ? " · " + new Date(c.date).toLocaleDateString() : ""}`;
+  const markup = c.coverPrice > 0 ? Math.round((c.value - c.coverPrice) / c.coverPrice * 100) : null;
+  document.getElementById("drawer-body").innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-cell"><div class="lbl">Issue</div><div class="v">#${escapeHTML(c.issue)}</div></div>
+      <div class="detail-cell"><div class="lbl">Publisher</div><div class="v">${c.publisher}</div></div>
+      <div class="detail-cell"><div class="lbl">Cover Price</div><div class="v">$${c.coverPrice.toFixed(2)}</div></div>
+      <div class="detail-cell"><div class="lbl">Current Value</div><div class="v" style="color:var(--gold)">$${c.value.toFixed(2)}</div></div>
+      ${markup !== null ? `<div class="detail-cell wide"><div class="lbl">Appreciation</div><div class="v" style="color:${markup >= 0 ? 'var(--ok)' : 'var(--accent)'}">${markup >= 0 ? "+" : ""}${markup}% since release</div></div>` : ""}
+      ${c.artist ? `<div class="detail-cell wide"><div class="lbl">Artists</div><div class="v">${escapeHTML(c.artist)}</div></div>` : ""}
+    </div>
+    <div class="detail-actions">
+      <button class="btn primary" id="d-insights">AI Insights</button>
+      <button class="btn" id="d-ebay">Draft eBay Listing</button>
+    </div>
+    <div id="ai-output" style="margin-top:18px"></div>
+  `;
+  drawer.classList.add("open");
+  document.getElementById("d-insights").addEventListener("click", () => aiInsights(c));
+  document.getElementById("d-ebay").addEventListener("click", () => aiEbay(c));
+}
+
+async function aiInsights(c) {
+  const out = document.getElementById("ai-output");
+  out.innerHTML = `<div class="insights-card"><h4>Collector's Brief</h4><div id="ai-body"><span class="spinner"></span>Loading…</div></div>`;
+  const prompt = `Give me a 3-bullet collector's brief on ${c.series} #${c.issue} (${c.publisherRaw || c.publisher}${c.date ? ", " + new Date(c.date).toLocaleDateString() : ""}${c.artist ? ", art by " + c.artist : ""}). Include: (1) why this issue matters historically (first appearances, story arc, creator significance — say "minor issue" if it's unremarkable), (2) what drives its current market value of $${c.value}, (3) one thing a seller should know before listing. Use markdown bullets. Be candid — not every issue is a key.`;
+  try {
+    await callClaude(prompt, t => { document.getElementById("ai-body").innerHTML = fmtMD(t); });
+  } catch(e) {
+    document.getElementById("ai-body").innerHTML = `<p style="color:var(--accent)"><strong>Error:</strong> ${e.message}</p>`;
+  }
+}
+
+async function aiEbay(c) {
+  const out = document.getElementById("ai-output");
+  out.innerHTML = `<div class="ebay-card"><div class="ebay-logo"><span>e</span><span>b</span><span>a</span><span>y</span></div><div id="eb-title" class="ebay-title"><span class="spinner"></span>Drafting…</div><div id="eb-desc" class="ebay-desc"></div><button class="copy-btn hidden" id="eb-copy">Copy Listing</button></div>`;
+  const prompt = `Generate a realistic eBay listing for this comic.
+
+Details:
+- Series: ${c.series}
+- Issue: #${c.issue}
+- Publisher: ${c.publisherRaw || c.publisher}
+- Date: ${c.date ? new Date(c.date).toLocaleDateString() : "unknown"}
+- Artist(s): ${c.artist || "uncredited"}
+- Cover price: $${c.coverPrice.toFixed(2)}
+- Asking price: $${c.value.toFixed(2)}
+
+Output FORMAT (no preamble, just these two sections separated by a blank line):
+
+TITLE: <single-line eBay title, 80 chars max, keyword-stuffed for search>
+
+DESCRIPTION:
+<3-4 short paragraphs: hook, significance, condition disclaimer (raw/ungraded), shipping, call to action. Plain text.>`;
+  const titleEl = document.getElementById("eb-title");
+  const descEl = document.getElementById("eb-desc");
+  try {
+    await callClaude(prompt, t => {
+      const tm = t.match(/TITLE:\s*(.+?)(?:\n|$)/);
+      const dm = t.match(/DESCRIPTION:\s*([\s\S]+)/);
+      titleEl.textContent = tm ? tm[1].trim() : t.slice(0, 100);
+      descEl.textContent = dm ? dm[1].trim() : "";
+    });
+    const copy = document.getElementById("eb-copy");
+    copy.classList.remove("hidden");
+    copy.addEventListener("click", () => {
+      navigator.clipboard.writeText(titleEl.textContent + "\n\n" + descEl.textContent);
+      copy.textContent = "✓ Copied"; setTimeout(() => copy.textContent = "Copy Listing", 1500);
+    });
+  } catch(e) { titleEl.innerHTML = `<span style="color:var(--accent)">Error: ${e.message}</span>`; }
+}
+
+// ============================================================
+// CLAUDE API
+// ============================================================
+function getApiKey() { return localStorage.getItem("anthropic_api_key") || ""; }
+async function callClaude(prompt, onChunk) {
+  const key = getApiKey();
+  if (!key) throw new Error("Set an Anthropic API key in ⚙ Settings first.");
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "content-type":"application/json", "x-api-key": key, "anthropic-version":"2023-06-01", "anthropic-dangerous-direct-browser-access":"true" },
+    body: JSON.stringify({ model: MODEL, max_tokens: 1200, stream: true, messages: [{ role: "user", content: prompt }] }),
+  });
+  if (!res.ok) throw new Error(`API ${res.status}: ${await res.text()}`);
+  const reader = res.body.getReader(); const dec = new TextDecoder();
+  let buf = "", full = "";
+  while (true) {
+    const { done, value } = await reader.read(); if (done) break;
+    buf += dec.decode(value, { stream: true });
+    const lines = buf.split("\n"); buf = lines.pop();
+    for (const ln of lines) {
+      if (ln.startsWith("data: ")) {
+        const d = ln.slice(6).trim(); if (d === "[DONE]") continue;
+        try { const p = JSON.parse(d); if (p.type === "content_block_delta" && p.delta?.text) { full += p.delta.text; onChunk(full); } } catch(e) {}
+      }
+    }
+  }
+  return full;
+}
+function fmtMD(s) {
+  let h = s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
+  const lines = h.split("\n"); let out = "", inUl = false;
+  for (const ln of lines) {
+    const t = ln.trim();
+    if (/^[-•]\s+/.test(t)) { if (!inUl) { out += "<ul>"; inUl = true; } out += "<li>" + t.replace(/^[-•]\s+/,"") + "</li>"; }
+    else { if (inUl) { out += "</ul>"; inUl = false; } if (t) out += "<p>" + t + "</p>"; }
+  }
+  if (inUl) out += "</ul>";
+  return out;
 }
 
 // ============================================================
 // ANALYTICS
 // ============================================================
-function computeInsights() {
-  const total = COMICS.reduce((s,c) => s + c.value, 0);
-  const keys = COMICS.filter(c => c.key).length;
-  const cgc = COMICS.filter(c => c.cgc).length;
-  const yearsArr = COMICS.map(c => new Date(c.date).getFullYear());
-  const oldest = Math.min(...yearsArr);
-  const newest = Math.max(...yearsArr);
-  const span = newest - oldest;
-
-  // Era buckets
-  const eras = {
-    "Silver Age (1956-1970)": COMICS.filter(c => { const y = new Date(c.date).getFullYear(); return y >= 1956 && y <= 1970; }),
-    "Bronze Age (1970-1985)": COMICS.filter(c => { const y = new Date(c.date).getFullYear(); return y > 1970 && y <= 1985; }),
-    "Copper Age (1985-1991)": COMICS.filter(c => { const y = new Date(c.date).getFullYear(); return y > 1985 && y <= 1991; }),
-    "Modern Age (1992+)":     COMICS.filter(c => new Date(c.date).getFullYear() > 1991),
-  };
-  const dominantEra = Object.entries(eras).sort((a,b) => b[1].length - a[1].length)[0];
-
-  // Publisher
-  const pubGroups = {};
-  COMICS.forEach(c => { pubGroups[c.publisher] = (pubGroups[c.publisher] || 0) + c.value; });
-  const topPub = Object.entries(pubGroups).sort((a,b) => b[1] - a[1])[0];
-  const topPubPct = Math.round(topPub[1] / total * 100);
-
-  // Most valuable
-  const mvp = [...COMICS].sort((a,b) => b.value - a.value)[0];
-  // Oldest book
-  const oldestBook = [...COMICS].sort((a,b) => new Date(a.date) - new Date(b.date))[0];
-  // Condition mix
-  const condCounts = COMICS.reduce((m,c) => { m[c.condition] = (m[c.condition]||0)+1; return m; }, {});
-  const dominantCond = Object.entries(condCounts).sort((a,b) => b[1] - a[1])[0];
-  const condName = { NM: "Near Mint", VF: "Very Fine", VG: "Very Good" }[dominantCond[0]] || dominantCond[0];
-
-  // Series concentration
-  const seriesCounts = COMICS.reduce((m,c) => { m[c.series] = (m[c.series]||0)+1; return m; }, {});
-  const dupSeries = Object.entries(seriesCounts).filter(([,n]) => n > 1).sort((a,b) => b[1] - a[1]);
-
-  // Average + median
-  const sortedVals = [...COMICS].map(c => c.value).sort((a,b) => a - b);
-  const median = sortedVals[Math.floor(sortedVals.length/2)];
-  const avg = Math.round(total / COMICS.length);
-
-  return [
-    { icon: "💰", cls: "gold", h: "Collection Net Worth",
-      b: `Total valuation is <strong>$${total.toLocaleString()}</strong> across ${COMICS.length} issues — averaging <strong>$${avg}</strong> per book with a median of <strong>$${median}</strong>.` },
-    { icon: "👑", cls: "", h: "Crown Jewel",
-      b: `<strong>${mvp.title} #${mvp.issue}</strong> leads the collection at <strong>$${mvp.value}</strong> — ${Math.round(mvp.value/total*100)}% of total value.` },
-    { icon: "🗝️", cls: "gold", h: "Key Issue Density",
-      b: `<strong>${keys} of ${COMICS.length}</strong> (${Math.round(keys/COMICS.length*100)}%) are flagged as key issues — exceptional for a focused collection. The market rewards this kind of curation.` },
-    { icon: "🏛️", cls: "info", h: "Era Concentration",
-      b: `Strongest holdings are in the <strong>${dominantEra[0]}</strong> era (<strong>${dominantEra[1].length} books</strong>). Collection spans <strong>${span} years</strong>, from ${oldest} to ${newest}.` },
-    { icon: "📚", cls: "info", h: "Publisher Mix",
-      b: `<strong>${topPub[0]}</strong> dominates at <strong>${topPubPct}%</strong> of value ($${topPub[1]}). ${Object.keys(pubGroups).length}-publisher diversification — ${Object.keys(pubGroups).length >= 4 ? "well-balanced" : "concentrated"}.` },
-    { icon: "✨", cls: "ok", h: "Grading Profile",
-      b: `Dominant condition is <strong>${condName}</strong> (${dominantCond[1]}/${COMICS.length} books). ${cgc > 0 ? `<strong>${cgc} CGC slab${cgc>1?'s':''}</strong> add provenance and resale leverage.` : "No CGC-graded books yet — slabbing the top keys could unlock 20-40% premium."}` },
-    { icon: "📜", cls: "", h: "Oldest Book in Long-Box",
-      b: `<strong>${oldestBook.title} #${oldestBook.issue}</strong> from ${new Date(oldestBook.date).getFullYear()} — <strong>${new Date().getFullYear() - new Date(oldestBook.date).getFullYear()} years old</strong>.` },
-    ...(dupSeries.length ? [{
-      icon: "🔁", cls: "info", h: "Series Depth",
-      b: `Multiple copies in: ${dupSeries.map(([s,n]) => `<strong>${s}</strong> (${n})`).join(", ")}. Duplicates of keys can hedge or be flipped to fund upgrades.`
-    }] : []),
-  ];
-}
-
-function renderInsights() {
-  const items = computeInsights();
-  document.getElementById("insights-grid").innerHTML = items.map(i => `
-    <div class="insight ${i.cls}">
-      <div class="ico">${i.icon}</div>
-      <div class="h">${i.h}</div>
-      <div class="b">${i.b}</div>
-    </div>`).join("");
-}
-
-async function generateBrief() {
-  const btn = document.getElementById("generate-brief");
-  const out = document.getElementById("brief-output");
-  btn.disabled = true;
-  btn.textContent = "Generating…";
-  out.innerHTML = `<p style="color:var(--text-faint)"><span class="spinner"></span>Claude is reviewing the collection…</p>`;
-
-  const summary = COMICS.map(c =>
-    `- ${c.title} #${c.issue} (${c.edition}, ${c.publisher}, ${new Date(c.date).getFullYear()}) — ${c.condition}${c.cgc ? ' CGC '+c.cgc : ''} — $${c.value}${c.key ? ' [KEY]' : ''}`
-  ).join("\n");
-  const total = COMICS.reduce((s,c) => s+c.value, 0);
-
-  const prompt = `You are a senior comic appraiser and collection strategist with 25 years in the market — calm, candid, no hype.
-
-Below is a real collection. Write a Collection Brief in markdown using these EXACT sections (use ## for section headers, no preamble):
-
-## Executive Summary
-2-3 sentences. The collection's character in plain English: era, taste, focus, total value.
-
-## Strengths
-3-4 bullets. Specific, name issues. What makes this collection notable.
-
-## Gaps & Weaknesses
-2-3 bullets. Honest. Missing cornerstones, condition issues, era gaps, etc.
-
-## Top 3 Plays Right Now
-3 bullets. Concrete actions ranked by ROI:
-- "Slab X" / "Sell X to fund Y" / "Add Z while still affordable" — each with a brief why.
-
-## Market Outlook (12-month)
-One paragraph. What macro forces matter for THIS collection's holdings (e.g., Carnage movie chatter, Sandman Netflix renewals, X-23 in MCU, Spawn animated film, etc.).
-
-Total value: $${total} across ${COMICS.length} issues.
-
-Collection:
-${summary}
-
-Be specific. Reference issue numbers and dollar figures. Avoid generic advice.`;
-
-  try {
-    await callClaude(prompt, (text) => {
-      out.innerHTML = fmtBrief(text);
-    });
-  } catch (e) {
-    out.innerHTML = `<p style="color:var(--accent)"><strong>Error:</strong> ${e.message}</p>`;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Regenerate";
-  }
-}
-
 const ERAS = [
   { name: "Silver Age",  range: [1956, 1970], color: "var(--gold)" },
   { name: "Bronze Age",  range: [1971, 1985], color: "var(--accent)" },
@@ -1416,122 +856,125 @@ const ERAS = [
   { name: "Modern Age",  range: [1992, 9999], color: "var(--ok)" },
 ];
 
+function computeInsights() {
+  const total = COMICS.reduce((s,c) => s + c.value, 0);
+  const coverTotal = COMICS.reduce((s,c) => s + c.coverPrice, 0);
+  const markup = coverTotal > 0 ? ((total - coverTotal) / coverTotal * 100) : 0;
+  const seriesSet = new Set(COMICS.map(c => c.series));
+  const artistsAll = new Set();
+  COMICS.forEach(c => { if (c.artist) c.artist.split(" | ").forEach(a => artistsAll.add(a.trim())); });
+
+  const mvp = [...COMICS].sort((a,b) => b.value - a.value)[0];
+  const oldest = [...COMICS].filter(c => c.date).sort((a,b) => new Date(a.date) - new Date(b.date))[0];
+  const newest = [...COMICS].filter(c => c.date).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+
+  const seriesCounts = {};
+  const seriesValues = {};
+  COMICS.forEach(c => {
+    seriesCounts[c.series] = (seriesCounts[c.series] || 0) + 1;
+    seriesValues[c.series] = (seriesValues[c.series] || 0) + c.value;
+  });
+  const topSeries = Object.entries(seriesValues).sort((a,b) => b[1] - a[1])[0];
+  const deepestSeries = Object.entries(seriesCounts).sort((a,b) => b[1] - a[1])[0];
+
+  const pubGroups = {};
+  COMICS.forEach(c => { pubGroups[c.publisher] = (pubGroups[c.publisher] || 0) + c.value; });
+  const topPub = Object.entries(pubGroups).sort((a,b) => b[1] - a[1])[0];
+
+  const eraValues = {};
+  ERAS.forEach(e => {
+    eraValues[e.name] = COMICS.filter(c => {
+      if (!c.date) return false;
+      const y = new Date(c.date).getFullYear();
+      return y >= e.range[0] && y <= e.range[1];
+    }).reduce((s,c) => s + c.value, 0);
+  });
+  const dominantEra = Object.entries(eraValues).sort((a,b) => b[1] - a[1])[0];
+
+  return [
+    { icon: "💰", cls: "gold", h: "Collection Net Worth",
+      b: `<strong>$${Math.round(total).toLocaleString()}</strong> across <strong>${COMICS.length.toLocaleString()}</strong> issues spanning <strong>${seriesSet.size}</strong> series. Average <strong>$${(total/COMICS.length).toFixed(2)}</strong> per book.` },
+    { icon: "📈", cls: "ok", h: "Appreciation",
+      b: `Total cover price was <strong>$${Math.round(coverTotal).toLocaleString()}</strong> — collection has appreciated <strong>${markup >= 0 ? "+" : ""}${markup.toFixed(0)}%</strong> at current CovrPrice values.` },
+    { icon: "👑", cls: "", h: "Crown Jewel",
+      b: mvp ? `<strong>${mvp.series} #${mvp.issue}</strong> leads at <strong>$${mvp.value.toFixed(2)}</strong> (${(mvp.value/total*100).toFixed(1)}% of total).` : "—" },
+    { icon: "🏛️", cls: "info", h: "Era Strength",
+      b: dominantEra && dominantEra[1] > 0 ? `<strong>${dominantEra[0]}</strong> holdings are worth <strong>$${Math.round(dominantEra[1]).toLocaleString()}</strong> — biggest era bucket.` : "Mixed era distribution." },
+    { icon: "📚", cls: "info", h: "Publisher Concentration",
+      b: `<strong>${topPub[0]}</strong> dominates at <strong>$${Math.round(topPub[1]).toLocaleString()}</strong> (${(topPub[1]/total*100).toFixed(0)}%). Total: ${Object.keys(pubGroups).length} publishers represented.` },
+    { icon: "🎨", cls: "", h: "Artist Variety",
+      b: `<strong>${artistsAll.size}</strong> unique credited artists across the collection.` },
+    { icon: "📦", cls: "info", h: "Series Depth",
+      b: deepestSeries ? `Deepest run: <strong>${deepestSeries[0]}</strong> (${deepestSeries[1]} issues, $${Math.round(seriesValues[deepestSeries[0]]).toLocaleString()} total). Top series by value: <strong>${topSeries[0]}</strong>.` : "—" },
+    { icon: "📜", cls: "", h: "Date Range",
+      b: oldest && newest ? `Oldest: <strong>${oldest.series} #${oldest.issue}</strong> (${new Date(oldest.date).getFullYear()}). Newest: <strong>${newest.series} #${newest.issue}</strong> (${new Date(newest.date).getFullYear()}).` : "—" },
+  ];
+}
+
+function renderInsights() {
+  document.getElementById("insights-grid").innerHTML = computeInsights().map(i => `
+    <div class="insight ${i.cls}"><div class="ico">${i.icon}</div><div class="h">${i.h}</div><div class="b">${i.b}</div></div>`).join("");
+}
+
 function renderEraDonut() {
   const groups = ERAS.map(e => {
     const books = COMICS.filter(c => {
+      if (!c.date) return false;
       const y = new Date(c.date).getFullYear();
       return y >= e.range[0] && y <= e.range[1];
     });
-    const value = books.reduce((s, c) => s + c.value, 0);
-    return { ...e, books, value };
+    return { ...e, books, value: books.reduce((s,c) => s + c.value, 0) };
   }).filter(g => g.value > 0);
-
-  const total = groups.reduce((s, g) => s + g.value, 0);
+  const total = groups.reduce((s,g) => s+g.value, 0);
   const C = 2 * Math.PI * 40;
   const svg = document.getElementById("era-donut");
-  // Clear existing segments
   svg.innerHTML = `<circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface-3)" stroke-width="14"/>`;
-
   let offset = 0;
   groups.forEach((g, i) => {
     const len = (g.value / total) * C;
     const seg = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    seg.setAttribute("cx", "50");
-    seg.setAttribute("cy", "50");
-    seg.setAttribute("r", "40");
-    seg.setAttribute("fill", "none");
-    seg.setAttribute("stroke", g.color);
-    seg.setAttribute("stroke-width", "14");
-    seg.setAttribute("stroke-dasharray", `0 ${C}`);
-    seg.setAttribute("stroke-dashoffset", `${-offset}`);
-    seg.setAttribute("transform", "rotate(-90 50 50)");
-    seg.style.transition = "stroke-dasharray 1s cubic-bezier(.2,.7,.3,1)";
+    seg.setAttribute("cx", "50"); seg.setAttribute("cy", "50"); seg.setAttribute("r", "40");
+    seg.setAttribute("fill", "none"); seg.setAttribute("stroke", g.color); seg.setAttribute("stroke-width", "14");
+    seg.setAttribute("stroke-dasharray", `0 ${C}`); seg.setAttribute("stroke-dashoffset", `${-offset}`);
+    seg.setAttribute("transform", "rotate(-90 50 50)"); seg.style.transition = "stroke-dasharray 1s cubic-bezier(.2,.7,.3,1)";
     svg.appendChild(seg);
-    // animate
     setTimeout(() => seg.setAttribute("stroke-dasharray", `${len} ${C}`), 80 + i * 120);
     offset += len;
   });
-
   document.getElementById("era-legend").innerHTML = groups.map(g => `
-    <div class="era-row">
-      <span class="sq" style="background:${g.color}"></span>
+    <div class="era-row"><span class="sq" style="background:${g.color}"></span>
       <span class="label">${g.name} <small>${g.range[0]}–${g.range[1] === 9999 ? "today" : g.range[1]} · ${g.books.length} book${g.books.length>1?'s':''}</small></span>
-      <span class="val">$${g.value} <small style="color:var(--text-faint)">(${Math.round(g.value/total*100)}%)</small></span>
-    </div>
-  `).join("");
-}
-
-function fmtBrief(s) {
-  let h = s
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-  const lines = h.split("\n");
-  let out = "", inUl = false;
-  for (const ln of lines) {
-    const t = ln.trim();
-    if (/^##\s+/.test(t)) {
-      if (inUl) { out += "</ul>"; inUl = false; }
-      out += "<h3>" + t.replace(/^##\s+/, "") + "</h3>";
-    } else if (/^###\s+/.test(t)) {
-      if (inUl) { out += "</ul>"; inUl = false; }
-      out += "<h4>" + t.replace(/^###\s+/, "") + "</h4>";
-    } else if (/^[-•]\s+/.test(t)) {
-      if (!inUl) { out += "<ul>"; inUl = true; }
-      out += "<li>" + t.replace(/^[-•]\s+/, "") + "</li>";
-    } else {
-      if (inUl) { out += "</ul>"; inUl = false; }
-      if (t) out += "<p>" + t + "</p>";
-    }
-  }
-  if (inUl) out += "</ul>";
-  return out;
+      <span class="val">$${Math.round(g.value).toLocaleString()} <small style="color:var(--text-faint)">(${(g.value/total*100).toFixed(0)}%)</small></span>
+    </div>`).join("");
 }
 
 function renderAnalytics() {
   renderInsights();
-  const seriesGroups = {};
-  COMICS.forEach(c => { seriesGroups[c.series] = (seriesGroups[c.series] || 0) + c.value; });
-  const max = Math.max(...Object.values(seriesGroups));
-  const sorted = Object.entries(seriesGroups).sort((a,b) => b[1] - a[1]);
+  // Top series bars
+  const seriesValues = {};
+  COMICS.forEach(c => { seriesValues[c.series] = (seriesValues[c.series] || 0) + c.value; });
+  const top = Object.entries(seriesValues).sort((a,b) => b[1] - a[1]).slice(0, 20);
+  const max = top[0] ? top[0][1] : 1;
   const bars = document.getElementById("series-bars");
-  bars.innerHTML = sorted.map(([s, v]) => `
-    <div class="bar-row">
-      <div class="name">${s}</div>
+  bars.innerHTML = top.map(([s, v]) => `
+    <div class="bar-row"><div class="name" title="${escapeHTML(s)}">${escapeHTML(s)}</div>
       <div class="bar-track"><div class="bar-fill" data-w="${(v/max*100).toFixed(1)}"></div></div>
-      <div class="val">$${v}</div>
-    </div>`).join("");
+      <div class="val">$${Math.round(v).toLocaleString()}</div></div>`).join("");
   setTimeout(() => bars.querySelectorAll(".bar-fill").forEach(b => b.style.width = b.dataset.w + "%"), 50);
 
   renderEraDonut();
 
+  // Top 5
   const top5 = [...COMICS].sort((a,b) => b.value - a.value).slice(0, 5);
   const heights = [220, 190, 160, 130, 110];
   document.getElementById("podium").innerHTML = top5.map((c, i) => `
     <div class="podium-step" style="height:${heights[i]}px">
       <div class="podium-rank">#${i+1}</div>
-      <div class="podium-title">${c.title}<br/>#${c.issue}</div>
-      <div class="podium-val">$${c.value}</div>
+      <div class="podium-title">${escapeHTML(c.series)}<br/>#${escapeHTML(c.issue)}</div>
+      <div class="podium-val">$${c.value.toFixed(2)}</div>
     </div>`).join("");
-
-  const sortedByDate = [...COMICS].sort((a,b) => new Date(a.date) - new Date(b.date));
-  const minT = new Date(sortedByDate[0].date).getTime();
-  const maxT = new Date(sortedByDate[sortedByDate.length-1].date).getTime();
-  document.getElementById("timeline").innerHTML = sortedByDate.map(c => {
-    const t = new Date(c.date).getTime();
-    const pct = ((t - minT) / (maxT - minT)) * 100;
-    return `
-      <div class="timeline-dot ${c.key ? 'key' : ''}" style="left:${pct}%" title="${c.title} #${c.issue}">
-        <div class="timeline-label">
-          <span class="year">${new Date(c.date).getFullYear()}</span>
-          ${c.title.split(' ').slice(0,2).join(' ')}
-        </div>
-      </div>`;
-  }).join("");
 }
 
-// ============================================================
-// TABS
-// ============================================================
 document.querySelectorAll(".nav-tab").forEach(t => {
   t.addEventListener("click", () => {
     document.querySelectorAll(".nav-tab").forEach(x => x.classList.remove("active"));
@@ -1544,145 +987,223 @@ document.querySelectorAll(".nav-tab").forEach(t => {
 });
 
 // ============================================================
-// ANTHROPIC API
+// AI COLLECTION BRIEF
 // ============================================================
-const MODEL = "claude-sonnet-4-20250514";
-function getApiKey() { return localStorage.getItem("anthropic_api_key") || ""; }
+async function generateBrief() {
+  const btn = document.getElementById("generate-brief"); const out = document.getElementById("brief-output");
+  btn.disabled = true; btn.textContent = "Generating…";
+  out.innerHTML = `<p style="color:var(--text-faint)"><span class="spinner"></span>Claude is reviewing…</p>`;
 
-async function callClaude(prompt, onChunk) {
-  const key = getApiKey();
-  if (!key) throw new Error("No API key set. Click the gear icon to add one.");
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": key,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true",
-    },
-    body: JSON.stringify({ model: MODEL, max_tokens: 1024, stream: true, messages: [{ role: "user", content: prompt }] }),
-  });
-  if (!res.ok) throw new Error(`API ${res.status}: ${await res.text()}`);
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "", fullText = "";
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop();
-    for (const line of lines) {
-      if (line.startsWith("data: ")) {
-        const d = line.slice(6).trim();
-        if (d === "[DONE]") continue;
-        try {
-          const p = JSON.parse(d);
-          if (p.type === "content_block_delta" && p.delta?.text) {
-            fullText += p.delta.text;
-            onChunk(fullText);
-          }
-        } catch(e) {}
-      }
-    }
-  }
-  return fullText;
+  const total = COMICS.reduce((s,c) => s+c.value, 0);
+  const top30 = [...COMICS].sort((a,b) => b.value - a.value).slice(0, 30);
+  const pubBreak = {};
+  COMICS.forEach(c => { pubBreak[c.publisher] = (pubBreak[c.publisher] || 0) + c.value; });
+  const pubLines = Object.entries(pubBreak).sort((a,b) => b[1]-a[1]).map(([p,v]) => `- ${p}: $${Math.round(v).toLocaleString()} (${COMICS.filter(c=>c.publisher===p).length} issues)`).join("\n");
+
+  const prompt = `You are a senior comic appraiser, 25 years in the market — calm, candid, no hype.
+
+This is a real collection of ${COMICS.length} comics, total CovrPrice value $${Math.round(total).toLocaleString()}.
+
+Publisher breakdown:
+${pubLines}
+
+Top 30 most valuable issues (this is a sample; full collection is larger):
+${top30.map(c => `- ${c.series} #${c.issue} (${c.publisher}${c.date ? ", " + new Date(c.date).getFullYear() : ""}) — $${c.value.toFixed(2)}`).join("\n")}
+
+Write a Collection Brief in markdown using these EXACT sections (use ## for section headers, no preamble):
+
+## Executive Summary
+2-3 sentences. Character of the collection in plain English.
+
+## Strengths
+3-4 bullets. Specific, name issues. What stands out.
+
+## Gaps & Weaknesses
+2-3 bullets. Honest assessment.
+
+## Top 3 Plays Right Now
+3 bullets. Specific actions: "Slab X", "Sell X to fund Y", "Add Z while affordable" — with brief why.
+
+## Market Outlook (12-month)
+One paragraph. Macro forces affecting THIS collection.
+
+Be specific. Reference issue numbers + dollar figures. Avoid generic advice.`;
+
+  try { await callClaude(prompt, t => { out.innerHTML = fmtBrief(t); }); }
+  catch(e) { out.innerHTML = `<p style="color:var(--accent)"><strong>Error:</strong> ${e.message}</p>`; }
+  finally { btn.disabled = false; btn.textContent = "Regenerate"; }
 }
-
-// ============================================================
-// DRAWER
-// ============================================================
-const drawer = document.getElementById("drawer");
-document.getElementById("drawer-close").addEventListener("click", () => drawer.classList.remove("open"));
-
-function fmtMD(s) {
+function fmtBrief(s) {
   let h = s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
-  const lines = h.split("\n");
-  let out = "", inUl = false;
+  const lines = h.split("\n"); let out = "", inUl = false;
   for (const ln of lines) {
     const t = ln.trim();
-    if (/^[-•]\s+/.test(t)) {
-      if (!inUl) { out += "<ul>"; inUl = true; }
-      out += "<li>" + t.replace(/^[-•]\s+/,"") + "</li>";
-    } else {
-      if (inUl) { out += "</ul>"; inUl = false; }
-      if (t) out += "<p>" + t + "</p>";
-    }
+    if (/^##\s+/.test(t)) { if (inUl) { out += "</ul>"; inUl = false; } out += "<h3>" + t.replace(/^##\s+/,"") + "</h3>"; }
+    else if (/^###\s+/.test(t)) { if (inUl) { out += "</ul>"; inUl = false; } out += "<h4>" + t.replace(/^###\s+/,"") + "</h4>"; }
+    else if (/^[-•]\s+/.test(t)) { if (!inUl) { out += "<ul>"; inUl = true; } out += "<li>" + t.replace(/^[-•]\s+/,"") + "</li>"; }
+    else { if (inUl) { out += "</ul>"; inUl = false; } if (t) out += "<p>" + t + "</p>"; }
   }
   if (inUl) out += "</ul>";
   return out;
 }
-
-async function openInsights(c) {
-  document.getElementById("drawer-title").textContent = `${c.title} #${c.issue}`;
-  document.getElementById("drawer-sub").textContent = `${c.publisher} · ${c.edition} · ${c.condition}${c.cgc ? ' · CGC '+c.cgc : ''}`;
-  document.getElementById("drawer-body").innerHTML = `<div class="insights-card"><h4>Collector's Brief</h4><div id="ins-body"><span class="spinner"></span>Loading…</div></div>`;
-  drawer.classList.add("open");
-
-  const prompt = `Give me a 3-bullet collector's brief on ${c.title} #${c.issue} (${c.edition}, ${c.publisher}, ${new Date(c.date).toLocaleDateString()}). Include: (1) why this issue matters historically, (2) what drives its current market value, (3) one thing a seller should know before listing it on eBay. Use markdown bullets. Be concise and authoritative — speak to a serious collector.`;
-  const body = document.getElementById("ins-body");
-  try {
-    await callClaude(prompt, (text) => { body.innerHTML = fmtMD(text); });
-  } catch(e) {
-    body.innerHTML = `<p style="color:var(--accent)"><strong>Error:</strong> ${e.message}</p>`;
-  }
-}
-
-async function openEbay(c) {
-  document.getElementById("drawer-title").textContent = `eBay Listing — ${c.title} #${c.issue}`;
-  document.getElementById("drawer-sub").textContent = `Auto-generated draft`;
-  document.getElementById("drawer-body").innerHTML = `<div class="ebay-card">
-    <div class="ebay-logo"><span>e</span><span>b</span><span>a</span><span>y</span></div>
-    <div id="ebay-title" class="ebay-title"><span class="spinner"></span>Drafting…</div>
-    <div id="ebay-desc" class="ebay-desc"></div>
-    <button class="copy-btn" id="copy-listing">Copy Listing</button>
-  </div>`;
-  drawer.classList.add("open");
-
-  const prompt = `Generate a realistic eBay listing for this comic book.
-
-Comic details:
-- Title: ${c.title}, Vol. ${c.vol}
-- Issue: #${c.issue}
-- Edition: ${c.edition}
-- Publisher: ${c.publisher}
-- Date: ${new Date(c.date).toLocaleDateString()}
-- Condition: ${c.condition}${c.cgc ? ' (CGC graded ' + c.cgc + ')' : ' (raw, ungraded)'}
-- Key issue: ${c.key ? 'YES' : 'No'}
-- Asking price: $${c.value}
-
-Output FORMAT (no preamble, no markdown headers, just these two sections separated by a blank line):
-
-TITLE: <a single-line eBay title, 80 chars max, keyword-stuffed for search>
-
-DESCRIPTION:
-<3-5 short paragraphs. Include: a hook, key story significance, condition details, shipping/packaging notes, closing call-to-action. Plain text, no markdown.>`;
-
-  const titleEl = document.getElementById("ebay-title");
-  const descEl = document.getElementById("ebay-desc");
-  try {
-    await callClaude(prompt, (text) => {
-      const tMatch = text.match(/TITLE:\s*(.+?)(?:\n|$)/);
-      const dMatch = text.match(/DESCRIPTION:\s*([\s\S]+)/);
-      titleEl.textContent = tMatch ? tMatch[1].trim() : text.slice(0, 100);
-      descEl.textContent = dMatch ? dMatch[1].trim() : "";
-    });
-    document.getElementById("copy-listing").addEventListener("click", () => {
-      navigator.clipboard.writeText(titleEl.textContent + "\n\n" + descEl.textContent).then(() => {
-        const btn = document.getElementById("copy-listing");
-        btn.textContent = "✓ Copied";
-        setTimeout(() => btn.textContent = "Copy Listing", 1500);
-      });
-    });
-  } catch(e) {
-    titleEl.innerHTML = `<span style="color:var(--accent)">Error: ${e.message}</span>`;
-    descEl.textContent = "";
-  }
-}
+document.getElementById("generate-brief").addEventListener("click", generateBrief);
 
 // ============================================================
-// SETTINGS
+// ADMIN
 // ============================================================
+function isAdmin() {
+  const urlOK = new URLSearchParams(location.search).get("admin") === ADMIN_KEY;
+  if (urlOK) localStorage.setItem("petes_admin", "1");
+  return localStorage.getItem("petes_admin") === "1";
+}
+function setAdmin(on) {
+  if (on) localStorage.setItem("petes_admin", "1"); else localStorage.removeItem("petes_admin");
+  document.documentElement.setAttribute("data-admin", on ? "1" : "0");
+}
+setAdmin(isAdmin());
+
+function toast(msg, kind = "") {
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.className = "toast show " + kind;
+  setTimeout(() => el.classList.remove("show"), 2800);
+}
+
+// Edit modal
+const editModal = document.getElementById("edit-modal");
+const editForm = document.getElementById("edit-form");
+let editingId = null;
+function openEditModal(c) {
+  editingId = c ? c.id : null;
+  document.getElementById("edit-title").textContent = c ? `Edit · ${c.series} #${c.issue}` : "Add Comic";
+  document.getElementById("edit-delete").style.display = c ? "" : "none";
+  const f = editForm.elements;
+  f.series.value = c?.series || ""; f.issue.value = c?.issue || "";
+  f.publisher.value = c?.publisherRaw || "Marvel Comics";
+  f.artist.value = c?.artist || ""; f.date.value = c?.date || "";
+  f.coverPrice.value = c?.coverPrice ?? ""; f.value.value = c?.value ?? "";
+  editModal.classList.add("open");
+  setTimeout(() => f.series.focus(), 100);
+}
+function closeEditModal() { editModal.classList.remove("open"); editingId = null; }
+function saveEditedComic() {
+  const f = editForm.elements;
+  if (!f.series.value.trim() || !f.issue.value.trim()) { toast("Series and issue are required", "error"); return; }
+  const data = {
+    series: f.series.value.trim(),
+    issue: f.issue.value.trim(),
+    publisherRaw: f.publisher.value,
+    publisher: normalizePublisher(f.publisher.value),
+    artist: f.artist.value.trim(),
+    date: f.date.value,
+    coverPrice: parseFloat(f.coverPrice.value) || 0,
+    value: parseFloat(f.value.value) || 0,
+  };
+  if (editingId != null) {
+    const i = COMICS.findIndex(c => c.id === editingId);
+    if (i >= 0) { COMICS[i] = { ...COMICS[i], ...data }; persistOverride(editingId, data); }
+  } else {
+    const newId = "new-" + Date.now();
+    const newC = { id: newId, ...data };
+    COMICS.push(newC); persistAdd(newC);
+  }
+  closeEditModal();
+  renderStats(); renderPublisherBar(); applyFilters();
+  toast(editingId != null ? "Saved" : "Added", "success");
+}
+function deleteEditedComic() {
+  if (editingId == null) return;
+  if (!confirm("Delete this comic? Persists locally until 'Save to GitHub'.")) return;
+  const isAddedComic = String(editingId).startsWith("new-");
+  if (isAddedComic) {
+    const adds = JSON.parse(localStorage.getItem("petes_corner_adds") || "[]");
+    localStorage.setItem("petes_corner_adds", JSON.stringify(adds.filter(c => c.id !== editingId)));
+  } else {
+    persistDelete(editingId);
+  }
+  COMICS = COMICS.filter(c => c.id !== editingId);
+  closeEditModal();
+  renderStats(); renderPublisherBar(); applyFilters();
+  toast("Deleted", "success");
+}
+document.getElementById("edit-save").addEventListener("click", saveEditedComic);
+document.getElementById("edit-cancel").addEventListener("click", closeEditModal);
+document.getElementById("edit-delete").addEventListener("click", deleteEditedComic);
+editModal.addEventListener("click", e => { if (e.target === editModal) closeEditModal(); });
+
+document.getElementById("add-comic").addEventListener("click", () => openEditModal(null));
+document.getElementById("exit-admin").addEventListener("click", () => {
+  setAdmin(false); toast("Exited admin mode");
+  if (location.search.includes("admin")) location.href = location.pathname;
+});
+
+document.getElementById("export-csv").addEventListener("click", () => {
+  const header = ['"CovrPrice Value"','Series','Issue','Publisher','Artist','"Cover Price"','"Release Date"'];
+  const lines = [header.join(",")];
+  COMICS.forEach(c => {
+    const dateStr = c.date ? new Date(c.date).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "";
+    const row = [
+      c.value.toFixed(2),
+      `"${(c.series || "").replace(/"/g, '""')}"`,
+      `"${(c.issue || "").replace(/"/g, '""')}"`,
+      `"${(c.publisherRaw || c.publisher || "").replace(/"/g, '""')}"`,
+      `"${(c.artist || "").replace(/"/g, '""')}"`,
+      c.coverPrice.toFixed(2),
+      `"${dateStr}"`,
+    ];
+    lines.push(row.join(","));
+  });
+  const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = "petes-corner-comics.csv";
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  toast("Downloaded petes-corner-comics.csv", "success");
+});
+
+async function pushToGitHub() {
+  const token = localStorage.getItem("github_pat");
+  if (!token) { toast("Add a GitHub token in Settings first", "error"); document.getElementById("open-settings").click(); return; }
+  const btn = document.getElementById("push-github");
+  btn.disabled = true; btn.textContent = "Pushing…";
+  try {
+    const gh = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CSV_PATH}`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" }
+    });
+    if (!gh.ok) throw new Error(`Fetch failed: ${gh.status}`);
+    const file = await gh.json();
+    // Build CSV from current COMICS
+    const header = ['"CovrPrice Value"','Series','Issue','Publisher','Artist','"Cover Price"','"Release Date"'];
+    const lines = [header.join(",")];
+    COMICS.forEach(c => {
+      const dateStr = c.date ? new Date(c.date).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "";
+      lines.push([
+        c.value.toFixed(2),
+        `"${(c.series || "").replace(/"/g, '""')}"`,
+        `"${(c.issue || "").replace(/"/g, '""')}"`,
+        `"${(c.publisherRaw || c.publisher || "").replace(/"/g, '""')}"`,
+        `"${(c.artist || "").replace(/"/g, '""')}"`,
+        c.coverPrice.toFixed(2),
+        `"${dateStr}"`,
+      ].join(","));
+    });
+    const csvContent = lines.join("\n");
+    const updated = btoa(unescape(encodeURIComponent(csvContent)));
+    const put = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CSV_PATH}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
+      body: JSON.stringify({ message: `Update collection (${COMICS.length} comics)`, content: updated, sha: file.sha }),
+    });
+    if (!put.ok) { const err = await put.json().catch(() => ({})); throw new Error(err.message || `Push failed: ${put.status}`); }
+    // Clear local overrides since they're now in the canonical CSV
+    localStorage.removeItem("petes_corner_overrides");
+    localStorage.removeItem("petes_corner_adds");
+    localStorage.removeItem("petes_corner_deletes");
+    toast("✓ Saved to GitHub — site rebuilds in ~30s", "success");
+  } catch(e) { toast("Error: " + e.message, "error"); }
+  finally { btn.disabled = false; btn.textContent = "Save to GitHub"; }
+}
+document.getElementById("push-github").addEventListener("click", pushToGitHub);
+
+// Settings
 const modal = document.getElementById("settings-modal");
 document.getElementById("open-settings").addEventListener("click", () => {
   document.getElementById("api-key-input").value = getApiKey();
@@ -1695,234 +1216,27 @@ document.getElementById("save-key").addEventListener("click", () => {
   const g = document.getElementById("gh-token-input").value.trim();
   if (v) localStorage.setItem("anthropic_api_key", v);
   if (g) localStorage.setItem("github_pat", g);
-  modal.classList.remove("open");
-  toast("Settings saved", "success");
+  modal.classList.remove("open"); toast("Settings saved", "success");
 });
 document.getElementById("clear-key").addEventListener("click", () => {
-  localStorage.removeItem("anthropic_api_key");
-  localStorage.removeItem("github_pat");
-  document.getElementById("api-key-input").value = "";
-  document.getElementById("gh-token-input").value = "";
+  localStorage.removeItem("anthropic_api_key"); localStorage.removeItem("github_pat");
+  document.getElementById("api-key-input").value = ""; document.getElementById("gh-token-input").value = "";
 });
-modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("open"); });
+modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("open"); });
 
 // ============================================================
-// WIRE
+// BOOT
 // ============================================================
-["search","filter-pub","filter-cond","filter-key","filter-cgc"].forEach(id => {
-  document.getElementById(id).addEventListener("input", applyFilters);
-});
-document.getElementById("generate-brief").addEventListener("click", generateBrief);
-
-// ============================================================
-// ADMIN MODE
-// ============================================================
-const ADMIN_KEY = "petes-corner-2026"; // simple gate; URL ?admin=petes-corner-2026 or stored flag
-
-function isAdmin() {
-  const urlOK = new URLSearchParams(location.search).get("admin") === ADMIN_KEY;
-  if (urlOK) localStorage.setItem("petes_admin", "1");
-  return localStorage.getItem("petes_admin") === "1";
-}
-function setAdmin(on) {
-  if (on) localStorage.setItem("petes_admin", "1");
-  else localStorage.removeItem("petes_admin");
-  document.documentElement.setAttribute("data-admin", on ? "1" : "0");
-}
-setAdmin(isAdmin());
-
-function toast(msg, kind = "") {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.className = "toast show " + kind;
-  setTimeout(() => el.classList.remove("show"), 2800);
-}
-
-// ============================================================
-// EDIT MODAL
-// ============================================================
-const editModal = document.getElementById("edit-modal");
-const editForm = document.getElementById("edit-form");
-let editingId = null;
-
-function openEditModal(comic) {
-  editingId = comic ? comic.id : null;
-  document.getElementById("edit-title").textContent = comic ? `Edit · ${comic.title} #${comic.issue}` : "Add Comic";
-  document.getElementById("edit-delete").style.display = comic ? "" : "none";
-  const f = editForm.elements;
-  f.title.value = comic?.title || "";
-  f.issue.value = comic?.issue || "";
-  f.vol.value = comic?.vol || 1;
-  f.edition.value = comic?.edition || "";
-  f.publisher.value = comic?.publisher || "Marvel";
-  f.series.value = comic?.series || "";
-  f.date.value = comic?.date ? comic.date.slice(0, 10) : "";
-  f.condition.value = comic?.condition || "NM";
-  f.value.value = comic?.value ?? "";
-  f.cgc.value = comic?.cgc ?? "";
-  f.cover.value = comic?.cover || "";
-  f.key.checked = !!comic?.key;
-  editModal.classList.add("open");
-  setTimeout(() => f.title.focus(), 100);
-}
-
-function closeEditModal() {
-  editModal.classList.remove("open");
-  editingId = null;
-}
-
-function saveEditedComic() {
-  const f = editForm.elements;
-  if (!f.title.value.trim() || !f.issue.value.trim()) {
-    toast("Title and issue are required", "error");
-    return;
-  }
-  const data = {
-    title: f.title.value.trim(),
-    issue: f.issue.value.trim(),
-    vol: parseInt(f.vol.value, 10) || 1,
-    edition: f.edition.value.trim() || "Regular Edition",
-    publisher: f.publisher.value,
-    series: f.series.value.trim() || f.title.value.trim(),
-    date: f.date.value,
-    condition: f.condition.value,
-    value: parseFloat(f.value.value) || 0,
-    cgc: f.cgc.value ? parseFloat(f.cgc.value) : null,
-    cover: f.cover.value.trim() || null,
-    key: f.key.checked,
-  };
-  if (editingId) {
-    const i = COMICS.findIndex(c => c.id === editingId);
-    if (i >= 0) COMICS[i] = { ...COMICS[i], ...data };
-  } else {
-    const newId = Math.max(0, ...COMICS.map(c => c.id)) + 1;
-    COMICS.push({ id: newId, ...data });
-  }
-  persistComics();
-  closeEditModal();
-  renderStats();
-  renderPublisherBar();
-  applyFilters();
-  toast(editingId ? "Saved" : "Added", "success");
-}
-
-function deleteEditedComic() {
-  if (!editingId) return;
-  if (!confirm("Delete this comic from the collection? This affects only the local cache until you Save to GitHub.")) return;
-  COMICS = COMICS.filter(c => c.id !== editingId);
-  persistComics();
-  closeEditModal();
-  renderStats();
-  renderPublisherBar();
-  applyFilters();
-  toast("Deleted", "success");
-}
-
-document.getElementById("edit-save").addEventListener("click", saveEditedComic);
-document.getElementById("edit-cancel").addEventListener("click", closeEditModal);
-document.getElementById("edit-delete").addEventListener("click", deleteEditedComic);
-editModal.addEventListener("click", (e) => { if (e.target === editModal) closeEditModal(); });
-
-// ============================================================
-// ADMIN ACTIONS
-// ============================================================
-document.getElementById("add-comic").addEventListener("click", () => openEditModal(null));
-document.getElementById("exit-admin").addEventListener("click", () => {
-  setAdmin(false);
-  toast("Exited admin mode");
-  if (location.search.includes("admin")) location.href = location.pathname;
-});
-
-document.getElementById("export-json").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify(COMICS, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = "petes-corner-comics.json";
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
-  toast("Downloaded petes-corner-comics.json", "success");
-});
-
-// GitHub push: updates the DEFAULT_COMICS array inside index.html via Contents API
-const REPO_OWNER = "fivetran-jasonchletsos";
-const REPO_NAME = "petes-corner";
-
-async function pushToGitHub() {
-  const token = localStorage.getItem("github_pat");
-  if (!token) {
-    toast("Add a GitHub token in Settings first", "error");
-    document.getElementById("open-settings").click();
-    return;
-  }
-  const btn = document.getElementById("push-github");
-  btn.disabled = true;
-  btn.textContent = "Pushing…";
+(async function init() {
   try {
-    // 1. Get current file SHA and contents
-    const gh = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/index.html`, {
-      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" }
-    });
-    if (!gh.ok) throw new Error(`Fetch failed: ${gh.status}`);
-    const file = await gh.json();
-    const content = decodeURIComponent(escape(atob(file.content)));
-
-    // 2. Replace the DEFAULT_COMICS array in the source
-    const startMarker = "const DEFAULT_COMICS = [";
-    const endMarker = "\n];";
-    const startIdx = content.indexOf(startMarker);
-    if (startIdx < 0) throw new Error("Couldn't locate DEFAULT_COMICS in source");
-    const endIdx = content.indexOf(endMarker, startIdx);
-    if (endIdx < 0) throw new Error("Couldn't locate end of DEFAULT_COMICS");
-
-    const formatted = COMICS.map(c => {
-      const parts = [
-        `  { id: ${c.id}`,
-        `title: ${JSON.stringify(c.title)}`,
-        `vol: ${c.vol}`,
-        `issue: ${JSON.stringify(c.issue)}`,
-        `edition: ${JSON.stringify(c.edition)}`,
-        `publisher: ${JSON.stringify(c.publisher)}`,
-        `date: ${JSON.stringify(c.date)}`,
-        `condition: ${JSON.stringify(c.condition)}`,
-        `value: ${c.value}`,
-        `key: ${c.key}`,
-        `cgc: ${c.cgc === null || c.cgc === undefined ? "null" : c.cgc}`,
-        `series: ${JSON.stringify(c.series)}`,
-        `cover: ${c.cover ? JSON.stringify(c.cover) : "null"} }`,
-      ];
-      return parts.join(", ");
-    }).join(",\n");
-    const newSection = `${startMarker}\n${formatted}\n`;
-    const newContent = content.slice(0, startIdx) + newSection + content.slice(endIdx + 1);
-
-    // 3. Commit
-    const updated = btoa(unescape(encodeURIComponent(newContent)));
-    const put = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/index.html`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: `Update collection (${COMICS.length} comics)`,
-        content: updated,
-        sha: file.sha,
-      }),
-    });
-    if (!put.ok) {
-      const err = await put.json().catch(() => ({}));
-      throw new Error(err.message || `Push failed: ${put.status}`);
-    }
-    toast("✓ Saved to GitHub — site rebuilds in ~30s", "success");
+    await loadComics();
+    renderStats();
+    renderPublisherBar();
+    applyFilters();
   } catch(e) {
-    toast("Error: " + e.message, "error");
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Save to GitHub";
+    document.getElementById("grid").innerHTML = `<div class="loading-state" style="grid-column:1/-1;color:var(--accent)">Error loading collection: ${e.message}</div>`;
   }
-}
-document.getElementById("push-github").addEventListener("click", pushToGitHub);
-
-renderStats();
-renderPublisherBar();
-renderGrid(COMICS);
+})();
 </script>
 </body>
 </html>

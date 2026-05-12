@@ -704,6 +704,100 @@
      ============================================================ */
   .hidden { display: none !important; }
 
+  /* ============================================================
+     ADMIN MODE
+     ============================================================ */
+  .admin-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; background: var(--accent); color: white;
+    border-radius: 6px; font-size: 11px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    margin-left: 8px;
+  }
+  .admin-badge::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: white; box-shadow: 0 0 8px white;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: .4; } }
+
+  .admin-actions {
+    display: none;
+    gap: 8px; margin-bottom: 16px;
+    padding: 12px 16px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    align-items: center; flex-wrap: wrap;
+  }
+  [data-admin="1"] .admin-actions { display: flex; }
+  .admin-actions .label {
+    font-size: 12px; font-weight: 600; color: var(--accent);
+    text-transform: uppercase; letter-spacing: .08em;
+  }
+  .admin-actions .spacer { flex: 1; }
+
+  .edit-pencil {
+    position: absolute; top: 16px; left: 16px;
+    background: var(--accent); color: white;
+    width: 28px; height: 28px; border: 0; border-radius: 6px;
+    display: none; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 13px; z-index: 3;
+    box-shadow: var(--shadow-sm);
+    opacity: 0; transition: opacity .15s, transform .15s;
+  }
+  [data-admin="1"] .edit-pencil { display: flex; }
+  .card:hover .edit-pencil { opacity: 1; }
+  .edit-pencil:hover { transform: scale(1.1); background: var(--accent-deep); }
+
+  /* Edit form */
+  .form-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .form-grid label.full { grid-column: 1 / -1; }
+  .form-grid label {
+    display: flex; flex-direction: column; gap: 6px;
+    font-size: 12px; font-weight: 600; color: var(--text-dim);
+    letter-spacing: .04em; text-transform: uppercase;
+  }
+  .form-grid label .help { color: var(--text-faint); font-weight: 400; font-size: 11px; text-transform: none; letter-spacing: 0; }
+  .form-grid input, .form-grid select {
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; font-size: 14px; outline: none;
+    transition: border-color .15s;
+    text-transform: none; letter-spacing: 0; font-weight: 400;
+  }
+  .form-grid input:focus, .form-grid select:focus {
+    border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .form-check {
+    display: flex; gap: 16px; align-items: center;
+    grid-column: 1 / -1; padding-top: 6px;
+  }
+  .form-check label {
+    flex-direction: row; gap: 8px; align-items: center;
+    text-transform: none; letter-spacing: 0; color: var(--text);
+    font-weight: 500; font-size: 14px;
+  }
+  .form-check input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .modal-box.wide { max-width: 600px; }
+  .modal-actions .btn.danger {
+    background: transparent; border-color: var(--accent);
+    color: var(--accent); margin-right: auto;
+  }
+  .modal-actions .btn.danger:hover { background: var(--accent); color: white; }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120%);
+    background: var(--text); color: var(--bg);
+    padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 500;
+    box-shadow: var(--shadow-lg); z-index: 200;
+    transition: transform .25s cubic-bezier(.4,0,.2,1);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--accent); color: white; }
+  .toast.success { background: var(--ok); color: white; }
+
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 5px; }
@@ -816,6 +910,16 @@
       </div>
     </div>
 
+    <div class="admin-actions" id="admin-actions">
+      <span class="admin-badge">Admin</span>
+      <span class="label">Edit mode</span>
+      <span class="spacer"></span>
+      <button class="btn primary" id="add-comic">+ Add Comic</button>
+      <button class="btn" id="export-json">Export JSON</button>
+      <button class="btn" id="push-github">Save to GitHub</button>
+      <button class="btn" id="exit-admin">Exit</button>
+    </div>
+
     <div class="filters">
       <input type="text" class="input" id="search" placeholder="Search title…" />
       <select class="select" id="filter-pub"><option value="">All publishers</option></select>
@@ -901,25 +1005,90 @@
   <div class="drawer-body" id="drawer-body"></div>
 </aside>
 
+<!-- Edit Comic Modal -->
+<div class="modal" id="edit-modal">
+  <div class="modal-box wide">
+    <h2 id="edit-title">Edit Comic</h2>
+    <form id="edit-form" autocomplete="off" onsubmit="return false">
+      <div class="form-grid">
+        <label class="full">Title
+          <input type="text" name="title" required />
+        </label>
+        <label>Issue #
+          <input type="text" name="issue" placeholder="e.g. 1A, 361B" required />
+        </label>
+        <label>Volume
+          <input type="number" name="vol" min="1" value="1" required />
+        </label>
+        <label>Edition
+          <input type="text" name="edition" placeholder="e.g. Direct Edition" />
+        </label>
+        <label>Publisher
+          <select name="publisher" required>
+            <option>Marvel</option><option>DC</option><option>Image</option>
+            <option>Dark Horse</option><option>IDW</option><option>Other</option>
+          </select>
+        </label>
+        <label>Series
+          <input type="text" name="series" placeholder="e.g. Amazing Spider-Man" required />
+        </label>
+        <label>Date
+          <input type="date" name="date" required />
+        </label>
+        <label>Condition
+          <select name="condition" required>
+            <option value="NM">NM — Near Mint</option>
+            <option value="VF">VF — Very Fine</option>
+            <option value="VG">VG — Very Good</option>
+            <option value="GD">GD — Good</option>
+            <option value="FR">FR — Fair</option>
+          </select>
+        </label>
+        <label>Price (CLZ value, USD)
+          <input type="number" name="value" min="0" step="1" required />
+        </label>
+        <label>CGC Grade <span class="help">leave blank if raw</span>
+          <input type="number" name="cgc" min="0" max="10" step="0.1" placeholder="9.8" />
+        </label>
+        <label class="full">Cover Image URL <span class="help">direct .jpg/.png link</span>
+          <input type="url" name="cover" placeholder="https://..." />
+        </label>
+        <div class="form-check">
+          <label><input type="checkbox" name="key" /> Key Issue 🔑</label>
+        </div>
+      </div>
+    </form>
+    <div class="modal-actions" style="margin-top: 20px;">
+      <button class="btn danger" id="edit-delete">Delete</button>
+      <button class="btn" id="edit-cancel">Cancel</button>
+      <button class="btn primary" id="edit-save">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- Settings Modal -->
 <div class="modal" id="settings-modal">
   <div class="modal-box">
-    <h2>Anthropic API Key</h2>
-    <p>Enables AI Insights and listing generation. Stored only in this browser's <code>localStorage</code>; sent only to <code>api.anthropic.com</code>.</p>
+    <h2>Settings</h2>
+    <p style="margin-top: -6px;"><strong style="color:var(--text)">Anthropic API Key</strong> — enables AI Insights and listing generation. Stored only in this browser's <code>localStorage</code>.</p>
     <input type="password" class="input" id="api-key-input" placeholder="sk-ant-..." />
+    <p style="margin-top: 16px;"><strong style="color:var(--text)">GitHub Personal Access Token</strong> <span style="color:var(--text-faint)">(admin only)</span> — needed to push collection edits back to the repo. Requires <code>repo</code> scope. <a href="https://github.com/settings/tokens/new?scopes=repo&description=Pete's%20Corner" target="_blank" style="color:var(--accent)">Create one →</a></p>
+    <input type="password" class="input" id="gh-token-input" placeholder="ghp_..." />
     <div class="modal-actions">
-      <button class="btn" id="clear-key">Clear</button>
+      <button class="btn" id="clear-key">Clear All</button>
       <button class="btn" id="close-settings">Cancel</button>
       <button class="btn primary" id="save-key">Save</button>
     </div>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
 // ============================================================
-// DATA
+// DATA — defaults, overridable via localStorage edits
 // ============================================================
-const COMICS = [
+const DEFAULT_COMICS = [
   { id: 1, title: "The Amazing Spider-Man", vol: 1, issue: "361B", edition: "Newsstand Edition",
     publisher: "Marvel", date: "1992-04-11", condition: "NM", value: 106, key: true, cgc: null, series: "Amazing Spider-Man",
     cover: "https://cdn.marvel.com/u/prod/marvel/i/mg/f/03/57d04279039c9/portrait_uncanny.jpg" },
@@ -960,6 +1129,22 @@ const COMICS = [
     publisher: "IDW", date: "2015-04-01", condition: "NM", value: 58, key: false, cgc: null, series: "G.I. Joe: A Real American Hero",
     cover: "https://www.yojoe.com/images/resize/w/290/imagestore/5539/73849.jpg" },
 ];
+
+// Load comics from localStorage if present, else use defaults
+let COMICS = (() => {
+  try {
+    const stored = localStorage.getItem("petes_corner_comics");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length) return parsed;
+    }
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_COMICS));
+})();
+
+function persistComics() {
+  localStorage.setItem("petes_corner_comics", JSON.stringify(COMICS));
+}
 
 const PUBLISHER_COLORS = {
   "Marvel": "#ef4444",
@@ -1040,6 +1225,7 @@ function cardHTML(c) {
     : `<div class="cover-fallback" style="display:flex">No cover</div>`;
   return `
     <div class="card" data-id="${c.id}">
+      <button class="edit-pencil" data-action="edit" data-id="${c.id}" title="Edit">✎</button>
       <div class="card-corner">#${c.issue}</div>
       <div class="card-cover">${coverImg}</div>
       <div class="card-publisher">${c.publisher} · Vol. ${c.vol}</div>
@@ -1068,11 +1254,13 @@ function renderGrid(list) {
     setTimeout(() => card.classList.add("in"), Math.min(i*40, 600));
   });
   grid.querySelectorAll("[data-action]").forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
       const id = +btn.dataset.id;
       const comic = COMICS.find(c => c.id === id);
       if (btn.dataset.action === "ai") openInsights(comic);
       if (btn.dataset.action === "ebay") openEbay(comic);
+      if (btn.dataset.action === "edit") openEditModal(comic);
     });
   });
 }
@@ -1498,17 +1686,23 @@ DESCRIPTION:
 const modal = document.getElementById("settings-modal");
 document.getElementById("open-settings").addEventListener("click", () => {
   document.getElementById("api-key-input").value = getApiKey();
+  document.getElementById("gh-token-input").value = localStorage.getItem("github_pat") || "";
   modal.classList.add("open");
 });
 document.getElementById("close-settings").addEventListener("click", () => modal.classList.remove("open"));
 document.getElementById("save-key").addEventListener("click", () => {
   const v = document.getElementById("api-key-input").value.trim();
+  const g = document.getElementById("gh-token-input").value.trim();
   if (v) localStorage.setItem("anthropic_api_key", v);
+  if (g) localStorage.setItem("github_pat", g);
   modal.classList.remove("open");
+  toast("Settings saved", "success");
 });
 document.getElementById("clear-key").addEventListener("click", () => {
   localStorage.removeItem("anthropic_api_key");
+  localStorage.removeItem("github_pat");
   document.getElementById("api-key-input").value = "";
+  document.getElementById("gh-token-input").value = "";
 });
 modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("open"); });
 
@@ -1519,6 +1713,212 @@ modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList
   document.getElementById(id).addEventListener("input", applyFilters);
 });
 document.getElementById("generate-brief").addEventListener("click", generateBrief);
+
+// ============================================================
+// ADMIN MODE
+// ============================================================
+const ADMIN_KEY = "petes-corner-2026"; // simple gate; URL ?admin=petes-corner-2026 or stored flag
+
+function isAdmin() {
+  const urlOK = new URLSearchParams(location.search).get("admin") === ADMIN_KEY;
+  if (urlOK) localStorage.setItem("petes_admin", "1");
+  return localStorage.getItem("petes_admin") === "1";
+}
+function setAdmin(on) {
+  if (on) localStorage.setItem("petes_admin", "1");
+  else localStorage.removeItem("petes_admin");
+  document.documentElement.setAttribute("data-admin", on ? "1" : "0");
+}
+setAdmin(isAdmin());
+
+function toast(msg, kind = "") {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.className = "toast show " + kind;
+  setTimeout(() => el.classList.remove("show"), 2800);
+}
+
+// ============================================================
+// EDIT MODAL
+// ============================================================
+const editModal = document.getElementById("edit-modal");
+const editForm = document.getElementById("edit-form");
+let editingId = null;
+
+function openEditModal(comic) {
+  editingId = comic ? comic.id : null;
+  document.getElementById("edit-title").textContent = comic ? `Edit · ${comic.title} #${comic.issue}` : "Add Comic";
+  document.getElementById("edit-delete").style.display = comic ? "" : "none";
+  const f = editForm.elements;
+  f.title.value = comic?.title || "";
+  f.issue.value = comic?.issue || "";
+  f.vol.value = comic?.vol || 1;
+  f.edition.value = comic?.edition || "";
+  f.publisher.value = comic?.publisher || "Marvel";
+  f.series.value = comic?.series || "";
+  f.date.value = comic?.date ? comic.date.slice(0, 10) : "";
+  f.condition.value = comic?.condition || "NM";
+  f.value.value = comic?.value ?? "";
+  f.cgc.value = comic?.cgc ?? "";
+  f.cover.value = comic?.cover || "";
+  f.key.checked = !!comic?.key;
+  editModal.classList.add("open");
+  setTimeout(() => f.title.focus(), 100);
+}
+
+function closeEditModal() {
+  editModal.classList.remove("open");
+  editingId = null;
+}
+
+function saveEditedComic() {
+  const f = editForm.elements;
+  if (!f.title.value.trim() || !f.issue.value.trim()) {
+    toast("Title and issue are required", "error");
+    return;
+  }
+  const data = {
+    title: f.title.value.trim(),
+    issue: f.issue.value.trim(),
+    vol: parseInt(f.vol.value, 10) || 1,
+    edition: f.edition.value.trim() || "Regular Edition",
+    publisher: f.publisher.value,
+    series: f.series.value.trim() || f.title.value.trim(),
+    date: f.date.value,
+    condition: f.condition.value,
+    value: parseFloat(f.value.value) || 0,
+    cgc: f.cgc.value ? parseFloat(f.cgc.value) : null,
+    cover: f.cover.value.trim() || null,
+    key: f.key.checked,
+  };
+  if (editingId) {
+    const i = COMICS.findIndex(c => c.id === editingId);
+    if (i >= 0) COMICS[i] = { ...COMICS[i], ...data };
+  } else {
+    const newId = Math.max(0, ...COMICS.map(c => c.id)) + 1;
+    COMICS.push({ id: newId, ...data });
+  }
+  persistComics();
+  closeEditModal();
+  renderStats();
+  renderPublisherBar();
+  applyFilters();
+  toast(editingId ? "Saved" : "Added", "success");
+}
+
+function deleteEditedComic() {
+  if (!editingId) return;
+  if (!confirm("Delete this comic from the collection? This affects only the local cache until you Save to GitHub.")) return;
+  COMICS = COMICS.filter(c => c.id !== editingId);
+  persistComics();
+  closeEditModal();
+  renderStats();
+  renderPublisherBar();
+  applyFilters();
+  toast("Deleted", "success");
+}
+
+document.getElementById("edit-save").addEventListener("click", saveEditedComic);
+document.getElementById("edit-cancel").addEventListener("click", closeEditModal);
+document.getElementById("edit-delete").addEventListener("click", deleteEditedComic);
+editModal.addEventListener("click", (e) => { if (e.target === editModal) closeEditModal(); });
+
+// ============================================================
+// ADMIN ACTIONS
+// ============================================================
+document.getElementById("add-comic").addEventListener("click", () => openEditModal(null));
+document.getElementById("exit-admin").addEventListener("click", () => {
+  setAdmin(false);
+  toast("Exited admin mode");
+  if (location.search.includes("admin")) location.href = location.pathname;
+});
+
+document.getElementById("export-json").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(COMICS, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "petes-corner-comics.json";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  toast("Downloaded petes-corner-comics.json", "success");
+});
+
+// GitHub push: updates the DEFAULT_COMICS array inside index.html via Contents API
+const REPO_OWNER = "fivetran-jasonchletsos";
+const REPO_NAME = "petes-corner";
+
+async function pushToGitHub() {
+  const token = localStorage.getItem("github_pat");
+  if (!token) {
+    toast("Add a GitHub token in Settings first", "error");
+    document.getElementById("open-settings").click();
+    return;
+  }
+  const btn = document.getElementById("push-github");
+  btn.disabled = true;
+  btn.textContent = "Pushing…";
+  try {
+    // 1. Get current file SHA and contents
+    const gh = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/index.html`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" }
+    });
+    if (!gh.ok) throw new Error(`Fetch failed: ${gh.status}`);
+    const file = await gh.json();
+    const content = decodeURIComponent(escape(atob(file.content)));
+
+    // 2. Replace the DEFAULT_COMICS array in the source
+    const startMarker = "const DEFAULT_COMICS = [";
+    const endMarker = "\n];";
+    const startIdx = content.indexOf(startMarker);
+    if (startIdx < 0) throw new Error("Couldn't locate DEFAULT_COMICS in source");
+    const endIdx = content.indexOf(endMarker, startIdx);
+    if (endIdx < 0) throw new Error("Couldn't locate end of DEFAULT_COMICS");
+
+    const formatted = COMICS.map(c => {
+      const parts = [
+        `  { id: ${c.id}`,
+        `title: ${JSON.stringify(c.title)}`,
+        `vol: ${c.vol}`,
+        `issue: ${JSON.stringify(c.issue)}`,
+        `edition: ${JSON.stringify(c.edition)}`,
+        `publisher: ${JSON.stringify(c.publisher)}`,
+        `date: ${JSON.stringify(c.date)}`,
+        `condition: ${JSON.stringify(c.condition)}`,
+        `value: ${c.value}`,
+        `key: ${c.key}`,
+        `cgc: ${c.cgc === null || c.cgc === undefined ? "null" : c.cgc}`,
+        `series: ${JSON.stringify(c.series)}`,
+        `cover: ${c.cover ? JSON.stringify(c.cover) : "null"} }`,
+      ];
+      return parts.join(", ");
+    }).join(",\n");
+    const newSection = `${startMarker}\n${formatted}\n`;
+    const newContent = content.slice(0, startIdx) + newSection + content.slice(endIdx + 1);
+
+    // 3. Commit
+    const updated = btoa(unescape(encodeURIComponent(newContent)));
+    const put = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/index.html`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Update collection (${COMICS.length} comics)`,
+        content: updated,
+        sha: file.sha,
+      }),
+    });
+    if (!put.ok) {
+      const err = await put.json().catch(() => ({}));
+      throw new Error(err.message || `Push failed: ${put.status}`);
+    }
+    toast("✓ Saved to GitHub — site rebuilds in ~30s", "success");
+  } catch(e) {
+    toast("Error: " + e.message, "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Save to GitHub";
+  }
+}
+document.getElementById("push-github").addEventListener("click", pushToGitHub);
 
 renderStats();
 renderPublisherBar();

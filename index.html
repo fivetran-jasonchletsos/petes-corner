@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pete's Corner — Comic Collection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     THEME TOKENS
+     ============================================================ */
+  :root, [data-theme="dark"] {
+    --bg: #0d0e11;
+    --bg-elev: #15171c;
+    --surface: #1a1d24;
+    --surface-2: #22262f;
+    --surface-3: #2c313c;
+    --border: #2a2e38;
+    --border-soft: #1f232b;
+    --text: #ececf0;
+    --text-dim: #9aa0ac;
+    --text-faint: #6b6f7a;
+    --accent: #ef4444;
+    --accent-deep: #b91c1c;
+    --accent-soft: rgba(239, 68, 68, 0.12);
+    --gold: #f5a524;
+    --gold-soft: rgba(245, 165, 36, 0.14);
+    --ok: #22c55e;
+    --ok-soft: rgba(34, 197, 94, 0.14);
+    --info: #60a5fa;
+    --info-soft: rgba(96, 165, 250, 0.14);
+    --warn: #eab308;
+    --warn-soft: rgba(234, 179, 8, 0.14);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.35);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,.45);
+  }
+  [data-theme="light"] {
+    --bg: #fafafa;
+    --bg-elev: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f5f5f7;
+    --surface-3: #e9eaee;
+    --border: #e4e4e8;
+    --border-soft: #efeff2;
+    --text: #18181b;
+    --text-dim: #52525b;
+    --text-faint: #8a8a93;
+    --accent: #dc2626;
+    --accent-deep: #991b1b;
+    --accent-soft: rgba(220, 38, 38, 0.08);
+    --gold: #d97706;
+    --gold-soft: rgba(217, 119, 6, 0.10);
+    --ok: #16a34a;
+    --ok-soft: rgba(22, 163, 74, 0.10);
+    --info: #2563eb;
+    --info-soft: rgba(37, 99, 235, 0.10);
+    --warn: #ca8a04;
+    --warn-soft: rgba(202, 138, 4, 0.10);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.06);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,.08);
+  }
+
+  /* ============================================================
+     RESET & BASE
+     ============================================================ */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { transition: background .25s ease, color .25s ease; }
+  .display { font-family: 'Playfair Display', Georgia, serif; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  button { font-family: inherit; cursor: pointer; }
+  input, select { font-family: inherit; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ============================================================
+     HEADER
+     ============================================================ */
+  header {
+    position: sticky; top: 0; z-index: 30;
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: saturate(140%) blur(8px);
+  }
+  .header-inner {
+    max-width: 1400px; margin: 0 auto;
+    padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  }
+  .brand {
+    display: flex; align-items: baseline; gap: 14px;
+  }
+  .brand h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    line-height: 1;
+    letter-spacing: -.02em;
+  }
+  .brand h1 .accent { color: var(--accent); }
+  .brand .tagline {
+    font-size: 13px; color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .brand .tagline .dot { color: var(--text-faint); margin: 0 6px; }
+
+  .header-actions {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .nav-tabs {
+    display: flex; gap: 4px; background: var(--surface-2);
+    padding: 4px; border-radius: 8px;
+  }
+  .nav-tab {
+    background: transparent; border: 0; color: var(--text-dim);
+    padding: 8px 16px; font-size: 14px; font-weight: 500;
+    border-radius: 6px; transition: all .15s;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active {
+    background: var(--bg-elev); color: var(--text);
+    box-shadow: var(--shadow-sm);
+  }
+  .icon-btn {
+    background: var(--surface-2); border: 1px solid var(--border);
+    color: var(--text); width: 38px; height: 38px;
+    border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .icon-btn:hover { background: var(--surface-3); border-color: var(--text-faint); }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  /* ============================================================
+     MAIN
+     ============================================================ */
+  main {
+    max-width: 1400px; margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    margin-bottom: 20px;
+  }
+  .section-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 700; letter-spacing: -.01em;
+  }
+  .section-head .meta { color: var(--text-dim); font-size: 13px; }
+
+  /* ============================================================
+     STAT CARDS
+     ============================================================ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    transition: border-color .15s, transform .15s;
+    position: relative; overflow: hidden;
+  }
+  .stat:hover { border-color: var(--text-faint); }
+  .stat .label {
+    color: var(--text-dim); font-size: 12px; font-weight: 500;
+    letter-spacing: .04em; text-transform: uppercase;
+  }
+  .stat .value {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 700; margin-top: 6px; line-height: 1.1;
+    letter-spacing: -.01em;
+  }
+  .stat .value.money { color: var(--gold); }
+  .stat .sub {
+    margin-top: 8px; font-size: 12px; color: var(--text-faint);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat.wide { grid-column: span 2; }
+
+  .pub-bar {
+    height: 10px; border-radius: 999px; overflow: hidden;
+    display: flex; margin-top: 14px; background: var(--surface-3);
+  }
+  .pub-seg { height: 100%; transition: filter .15s; }
+  .pub-seg:hover { filter: brightness(1.2); }
+  .pub-legend {
+    display: flex; flex-wrap: wrap; gap: 12px 16px; margin-top: 12px;
+    font-size: 12px; color: var(--text-dim);
+  }
+  .pub-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .pub-dot { width: 8px; height: 8px; border-radius: 2px; }
+  .pub-legend strong { color: var(--text); margin-left: 2px; }
+
+  /* ============================================================
+     FILTERS
+     ============================================================ */
+  .filters {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 20px;
+  }
+  .input, .select {
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; font-size: 14px; outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .input:focus, .select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .input { flex: 1; min-width: 220px; }
+  .filters .toggle {
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    padding: 10px 14px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; font-size: 13px; color: var(--text-dim);
+    transition: all .15s;
+  }
+  .filters .toggle:hover { color: var(--text); border-color: var(--text-faint); }
+  .filters .toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+  .filters .toggle:has(input:checked) { color: var(--text); border-color: var(--accent); background: var(--accent-soft); }
+
+  /* ============================================================
+     CARDS GRID
+     ============================================================ */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all .2s;
+    transform: translateY(8px); opacity: 0;
+    position: relative; overflow: hidden;
+  }
+  .card.in { transform: translateY(0); opacity: 1; }
+  .card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+  .card-corner {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--accent-soft); color: var(--accent);
+    padding: 4px 10px; font-size: 12px; font-weight: 600;
+    border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+  }
+  .card-publisher {
+    font-size: 11px; color: var(--text-faint);
+    text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
+  }
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 700; line-height: 1.2;
+    margin-top: 6px; padding-right: 60px;
+    letter-spacing: -.01em;
+  }
+  .card-edition {
+    color: var(--text-dim); font-size: 13px; margin-top: 4px;
+    font-style: italic;
+  }
+  .card-badges {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px;
+  }
+  .badge {
+    font-size: 11px; font-weight: 600; padding: 3px 8px;
+    border-radius: 4px; letter-spacing: .03em;
+  }
+  .badge.nm { background: var(--ok-soft); color: var(--ok); }
+  .badge.vf { background: var(--info-soft); color: var(--info); }
+  .badge.vg { background: var(--warn-soft); color: var(--warn); }
+  .badge.cgc { background: var(--accent-soft); color: var(--accent); }
+  .badge.key { background: var(--gold-soft); color: var(--gold); }
+  .card-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700; color: var(--gold);
+    margin-top: 16px; line-height: 1;
+    letter-spacing: -.01em;
+  }
+  .card-value small {
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text-faint); font-weight: 400;
+    margin-top: 4px; letter-spacing: .1em;
+  }
+  .card-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid var(--border-soft);
+    font-size: 12px; color: var(--text-faint);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .card-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .btn {
+    flex: 1; background: var(--surface-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 9px 12px; font-size: 13px; font-weight: 500;
+    transition: all .15s; text-align: center; display: inline-block;
+  }
+  .btn:hover { background: var(--surface-3); border-color: var(--text-faint); }
+  .btn.primary {
+    background: var(--accent); color: white; border-color: var(--accent);
+  }
+  .btn.primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+
+  /* ============================================================
+     DRAWER
+     ============================================================ */
+  .drawer {
+    position: fixed; top: 0; right: 0; height: 100vh;
+    width: min(540px, 100%);
+    background: var(--bg-elev);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform .3s cubic-bezier(.4,.0,.2,1);
+    z-index: 50;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow-lg);
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head {
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+  }
+  .drawer-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 700; line-height: 1.2;
+  }
+  .drawer-head p {
+    color: var(--text-dim); font-size: 12px;
+    font-family: 'JetBrains Mono', monospace; margin-top: 4px;
+  }
+  .drawer-close {
+    background: var(--surface-2); border: 1px solid var(--border);
+    color: var(--text); width: 32px; height: 32px;
+    border-radius: 8px; font-size: 14px;
+  }
+  .drawer-close:hover { background: var(--surface-3); }
+  .drawer-body {
+    flex: 1; overflow-y: auto; padding: 24px;
+  }
+
+  .insights-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .insights-card h4 {
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    letter-spacing: .1em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .insights-card ul { padding-left: 18px; }
+  .insights-card li { margin: 8px 0; line-height: 1.6; }
+  .insights-card p { margin: 8px 0; line-height: 1.6; }
+  .insights-card strong { color: var(--text); font-weight: 600; }
+
+  .ebay-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .ebay-logo {
+    font-family: Arial, sans-serif; font-weight: 900;
+    font-size: 1.5rem; letter-spacing: -.05em;
+  }
+  .ebay-logo span:nth-child(1){ color:#e53238; }
+  .ebay-logo span:nth-child(2){ color:#0064d2; }
+  .ebay-logo span:nth-child(3){ color:#f5af02; }
+  .ebay-logo span:nth-child(4){ color:#86b817; }
+  .ebay-title {
+    font-weight: 600; font-size: 1rem; color: var(--info);
+    margin-top: 14px; line-height: 1.4;
+  }
+  .ebay-desc {
+    margin-top: 10px; font-size: 14px; color: var(--text-dim);
+    white-space: pre-wrap; line-height: 1.6;
+  }
+  .copy-btn {
+    margin-top: 14px; padding: 8px 14px;
+    background: var(--info); color: white; border: 0;
+    border-radius: 6px; font-size: 13px; font-weight: 600;
+  }
+
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin .7s linear infinite;
+    vertical-align: -3px; margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ============================================================
+     ANALYTICS
+     ============================================================ */
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 20px;
+  }
+  .a-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .a-panel h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700;
+    margin-bottom: 18px; letter-spacing: -.01em;
+  }
+  .bar-row {
+    display: grid; grid-template-columns: 200px 1fr 80px;
+    align-items: center; gap: 14px; margin: 10px 0;
+    font-size: 13px;
+  }
+  .bar-row .name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-row .val {
+    color: var(--gold); text-align: right; font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .bar-track {
+    height: 8px; background: var(--surface-2);
+    border-radius: 4px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    border-radius: 4px;
+    transition: width 1s cubic-bezier(.2,.7,.3,1);
+  }
+
+  .donut-wrap {
+    display: flex; align-items: center; gap: 28px;
+    justify-content: center; flex-wrap: wrap;
+  }
+  .donut { width: 180px; height: 180px; transform: rotate(-90deg); }
+  .donut-legend { font-size: 14px; }
+  .donut-legend > div {
+    display: flex; align-items: center; gap: 10px; margin: 10px 0;
+  }
+  .donut-legend .sq {
+    width: 12px; height: 12px; border-radius: 3px;
+  }
+  .donut-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700; color: var(--gold);
+    margin-top: 12px;
+  }
+
+  .timeline {
+    position: relative; overflow-x: auto;
+    padding: 24px 16px 60px;
+  }
+  .timeline-track {
+    position: relative; height: 2px; background: var(--border);
+    min-width: 800px;
+  }
+  .timeline-dot {
+    position: absolute; top: -7px; width: 16px; height: 16px;
+    background: var(--accent); border: 3px solid var(--bg-elev);
+    border-radius: 50%; transform: translateX(-50%); cursor: pointer;
+    transition: transform .15s;
+  }
+  .timeline-dot.key { background: var(--gold); }
+  .timeline-dot:hover { transform: translateX(-50%) scale(1.5); z-index: 5; }
+  .timeline-label {
+    position: absolute; top: 20px; transform: translateX(-50%);
+    font-size: 11px; color: var(--text-dim);
+    white-space: nowrap; max-width: 100px; text-align: center;
+    line-height: 1.3;
+  }
+  .timeline-label .year {
+    display: block; color: var(--text); font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .podium {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 8px; align-items: end; min-height: 240px;
+  }
+  .podium-step {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 8px; text-align: center;
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .podium-step:nth-child(1) {
+    background: var(--gold-soft); border-color: var(--gold);
+  }
+  .podium-step:nth-child(2) {
+    background: var(--info-soft); border-color: var(--info);
+  }
+  .podium-step:nth-child(3) {
+    background: var(--accent-soft); border-color: var(--accent);
+  }
+  .podium-rank {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700; line-height: 1;
+    color: var(--text);
+  }
+  .podium-title {
+    font-size: 11px; font-weight: 600; margin-top: 6px;
+    color: var(--text); line-height: 1.3;
+  }
+  .podium-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 700; margin-top: 6px;
+    color: var(--gold);
+  }
+
+  /* ============================================================
+     SETTINGS MODAL
+     ============================================================ */
+  .modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6);
+    z-index: 100; display: none; align-items: center; justify-content: center;
+    padding: 20px; backdrop-filter: blur(4px);
+  }
+  .modal.open { display: flex; }
+  .modal-box {
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px;
+    max-width: 460px; width: 100%;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal-box h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700; margin-bottom: 12px;
+  }
+  .modal-box p {
+    color: var(--text-dim); margin-bottom: 16px;
+    font-size: 14px; line-height: 1.5;
+  }
+  .modal-box p code {
+    background: var(--surface-2); padding: 1px 6px; border-radius: 4px;
+    font-size: 12px;
+  }
+  .modal-box .input { width: 100%; margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* ============================================================
+     UTILITIES
+     ============================================================ */
+  .hidden { display: none !important; }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+  @media (max-width: 1024px) {
+    .header-inner { padding: 16px 24px; }
+    main { padding: 32px 24px 60px; }
+    .stat.wide { grid-column: span 2; }
+    .analytics-grid { grid-template-columns: 1fr; }
+    .bar-row { grid-template-columns: 160px 1fr 70px; }
+  }
+  @media (max-width: 720px) {
+    .header-inner { padding: 14px 18px; }
+    main { padding: 24px 18px 60px; }
+    .brand { width: 100%; }
+    .brand h1 { font-size: 1.4rem; }
+    .brand .tagline { font-size: 11px; }
+    .header-actions { width: 100%; justify-content: space-between; }
+    .nav-tabs { flex: 1; }
+    .nav-tab { flex: 1; padding: 8px 10px; font-size: 13px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .stat.wide { grid-column: span 2; }
+    .stat .value { font-size: 1.6rem; }
+    .filters { gap: 8px; }
+    .input { width: 100%; min-width: 0; }
+    .grid { grid-template-columns: 1fr; }
+    .drawer { width: 100%; border-left: 0; border-top: 1px solid var(--border); }
+    .podium { grid-template-columns: repeat(2, 1fr); min-height: auto; }
+    .podium-step { min-height: 120px; }
+    .bar-row { grid-template-columns: 120px 1fr 60px; gap: 10px; font-size: 12px; }
+    .timeline-track { min-width: 700px; }
+    .card-actions { flex-direction: column; }
+    .btn { padding: 11px; }
+  }
+  @media (max-width: 420px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .stat.wide { grid-column: span 1; }
+  }
+  @media (hover: none) {
+    .btn, .nav-tab, .icon-btn { min-height: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <h1>Pete's <span class="accent">Corner</span></h1>
+      <span class="tagline">
+        <span id="est-count">—</span> issues
+        <span class="dot">·</span> est. <span id="est-year">—</span>
+      </span>
+    </div>
+    <div class="header-actions">
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="collection">Collection</button>
+        <button class="nav-tab" data-tab="analytics">Analytics</button>
+      </div>
+      <button class="icon-btn" id="theme-toggle" title="Toggle theme">
+        <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+      <button class="icon-btn" id="open-settings" title="API key settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Collection -->
+  <section id="view-collection">
+    <div class="section-head">
+      <h2>Collection</h2>
+      <span class="meta">A curated long-box · bagged &amp; boarded</span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="label">Total Value</div>
+        <div class="value money" id="stat-value">$0</div>
+        <div class="sub" id="stat-avg">Avg —</div>
+      </div>
+      <div class="stat">
+        <div class="label">Key Issues</div>
+        <div class="value" id="stat-keys">0</div>
+        <div class="sub" id="stat-keys-pct">— of collection</div>
+      </div>
+      <div class="stat">
+        <div class="label">CGC Graded</div>
+        <div class="value" id="stat-cgc">0</div>
+        <div class="sub">Slabs in vault</div>
+      </div>
+      <div class="stat wide">
+        <div class="label">Publisher Distribution</div>
+        <div class="pub-bar" id="pub-bar"></div>
+        <div class="pub-legend" id="pub-legend"></div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <input type="text" class="input" id="search" placeholder="Search title…" />
+      <select class="select" id="filter-pub"><option value="">All publishers</option></select>
+      <select class="select" id="filter-cond">
+        <option value="">All conditions</option>
+        <option value="NM">NM</option>
+        <option value="VF">VF</option>
+        <option value="VG">VG</option>
+      </select>
+      <label class="toggle"><input type="checkbox" id="filter-key"/> Key only</label>
+      <label class="toggle"><input type="checkbox" id="filter-cgc"/> CGC only</label>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- Analytics -->
+  <section id="view-analytics" class="hidden">
+    <div class="section-head">
+      <h2>Analytics</h2>
+      <span class="meta">Aggregate views across the collection</span>
+    </div>
+    <div class="analytics-grid">
+      <div class="a-panel" style="grid-column: 1 / -1;">
+        <h3>Value by Series</h3>
+        <div id="series-bars"></div>
+      </div>
+      <div class="a-panel">
+        <h3>Key Issues</h3>
+        <div class="donut-wrap">
+          <svg class="donut" viewBox="0 0 100 100" id="donut">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface-3)" stroke-width="14"/>
+            <circle id="donut-fg" cx="50" cy="50" r="40" fill="none" stroke="var(--gold)" stroke-width="14"
+              stroke-dasharray="0 251.2"/>
+          </svg>
+          <div class="donut-legend">
+            <div><span class="sq" style="background:var(--gold)"></span> <strong id="donut-key">0</strong> Key issues</div>
+            <div><span class="sq" style="background:var(--surface-3)"></span> <strong id="donut-nonkey">0</strong> Standard</div>
+            <div class="donut-pct" id="donut-pct">—%</div>
+          </div>
+        </div>
+      </div>
+      <div class="a-panel">
+        <h3>Top 5 Most Valuable</h3>
+        <div class="podium" id="podium"></div>
+      </div>
+      <div class="a-panel" style="grid-column: 1 / -1;">
+        <h3>Publication Timeline</h3>
+        <div class="timeline">
+          <div class="timeline-track" id="timeline"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Drawer -->
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <h2 id="drawer-title">—</h2>
+      <p id="drawer-sub">—</p>
+    </div>
+    <button class="drawer-close" id="drawer-close">✕</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+
+<!-- Settings Modal -->
+<div class="modal" id="settings-modal">
+  <div class="modal-box">
+    <h2>Anthropic API Key</h2>
+    <p>Enables AI Insights and listing generation. Stored only in this browser's <code>localStorage</code>; sent only to <code>api.anthropic.com</code>.</p>
+    <input type="password" class="input" id="api-key-input" placeholder="sk-ant-..." />
+    <div class="modal-actions">
+      <button class="btn" id="clear-key">Clear</button>
+      <button class="btn" id="close-settings">Cancel</button>
+      <button class="btn primary" id="save-key">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const COMICS = [
+  { id: 1, title: "The Amazing Spider-Man", vol: 1, issue: "361B", edition: "Newsstand Edition",
+    publisher: "Marvel", date: "1992-04-11", condition: "NM", value: 106, key: true, cgc: null, series: "Amazing Spider-Man" },
+  { id: 2, title: "Spawn", vol: 1, issue: "1B", edition: "Newsstand Edition",
+    publisher: "Image", date: "1992-05-01", condition: "NM", value: 105, key: true, cgc: null, series: "Spawn" },
+  { id: 3, title: "Aliens", vol: 1, issue: "1A", edition: "Regular Edition",
+    publisher: "Dark Horse", date: "1988-05-01", condition: "VF", value: 95, key: true, cgc: null, series: "Aliens" },
+  { id: 4, title: "Tales to Astonish", vol: 1, issue: "93A", edition: "Regular Edition",
+    publisher: "Marvel", date: "1967-04-11", condition: "VG", value: 94, key: true, cgc: null, series: "Tales to Astonish" },
+  { id: 5, title: "The Maxx", vol: 1, issue: "1A", edition: "Direct Edition",
+    publisher: "Image", date: "1993-03-01", condition: "NM", value: 83, key: true, cgc: 9.8, series: "The Maxx" },
+  { id: 6, title: "Thundercats", vol: 1, issue: "1A", edition: "Direct Edition",
+    publisher: "Marvel", date: "1985-12-01", condition: "VF", value: 79, key: true, cgc: null, series: "Thundercats" },
+  { id: 7, title: "Predator", vol: 1, issue: "1A", edition: "Regular Edition",
+    publisher: "Dark Horse", date: "1989-05-01", condition: "NM", value: 78, key: true, cgc: null, series: "Predator" },
+  { id: 8, title: "Web of Spider-Man", vol: 1, issue: "32B", edition: "Direct Edition",
+    publisher: "Marvel", date: "1987-07-28", condition: "VF", value: 71, key: true, cgc: null, series: "Web of Spider-Man" },
+  { id: 9, title: "The Sandman", vol: 2, issue: "1A", edition: "Regular Edition",
+    publisher: "DC", date: "1988-11-29", condition: "NM", value: 67, key: true, cgc: null, series: "The Sandman" },
+  { id: 10, title: "NYX", vol: 1, issue: "4", edition: "Regular Edition",
+    publisher: "Marvel", date: "2004-05-26", condition: "NM", value: 60, key: true, cgc: null, series: "NYX" },
+  { id: 11, title: "NYX", vol: 1, issue: "4", edition: "Regular Edition (Copy 2)",
+    publisher: "Marvel", date: "2004-05-26", condition: "NM", value: 60, key: true, cgc: null, series: "NYX" },
+  { id: 12, title: "The Maxx", vol: 1, issue: "1C", edition: "Glow In The Dark Variant",
+    publisher: "Image", date: "1993-03-01", condition: "NM", value: 59, key: true, cgc: null, series: "The Maxx" },
+  { id: 13, title: "G.I. Joe: A Real American Hero", vol: 1, issue: "212A", edition: "Cover A S L Gallant",
+    publisher: "IDW", date: "2015-04-01", condition: "NM", value: 58, key: false, cgc: null, series: "G.I. Joe: A Real American Hero" },
+];
+
+const PUBLISHER_COLORS = {
+  "Marvel": "#ef4444",
+  "DC": "#3b82f6",
+  "Image": "#f59e0b",
+  "Dark Horse": "#10b981",
+  "IDW": "#8b5cf6",
+  "Other": "#6b7280"
+};
+
+// ============================================================
+// THEME
+// ============================================================
+function setTheme(name) {
+  document.documentElement.setAttribute("data-theme", name);
+  localStorage.setItem("vault_theme", name);
+  document.getElementById("icon-sun").classList.toggle("hidden", name === "light");
+  document.getElementById("icon-moon").classList.toggle("hidden", name === "dark");
+}
+document.getElementById("theme-toggle").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  setTheme(cur === "dark" ? "light" : "dark");
+});
+setTheme(localStorage.getItem("vault_theme") || "dark");
+
+// ============================================================
+// STATS
+// ============================================================
+function renderStats() {
+  const total = COMICS.reduce((s,c) => s + c.value, 0);
+  const keys = COMICS.filter(c => c.key).length;
+  const cgc = COMICS.filter(c => c.cgc).length;
+  const years = COMICS.map(c => new Date(c.date).getFullYear());
+  document.getElementById("stat-value").textContent = "$" + total.toLocaleString();
+  document.getElementById("stat-avg").textContent = `Avg $${Math.round(total/COMICS.length)} per book`;
+  document.getElementById("stat-keys").textContent = keys;
+  document.getElementById("stat-keys-pct").textContent = `${Math.round(keys/COMICS.length*100)}% of collection`;
+  document.getElementById("stat-cgc").textContent = cgc;
+  document.getElementById("est-year").textContent = Math.min(...years);
+  document.getElementById("est-count").textContent = COMICS.length;
+}
+
+function renderPublisherBar() {
+  const groups = {};
+  COMICS.forEach(c => { groups[c.publisher] = (groups[c.publisher] || 0) + c.value; });
+  const total = Object.values(groups).reduce((s,v) => s+v, 0);
+  const sorted = Object.entries(groups).sort((a,b) => b[1] - a[1]);
+  document.getElementById("pub-bar").innerHTML = sorted.map(([pub, val]) =>
+    `<div class="pub-seg" style="width:${(val/total*100).toFixed(1)}%;background:${PUBLISHER_COLORS[pub] || PUBLISHER_COLORS.Other}" title="${pub}: $${val}"></div>`
+  ).join("");
+  document.getElementById("pub-legend").innerHTML = sorted.map(([pub, val]) =>
+    `<span><span class="pub-dot" style="background:${PUBLISHER_COLORS[pub] || PUBLISHER_COLORS.Other}"></span>${pub} <strong>$${val}</strong></span>`
+  ).join("");
+  const filt = document.getElementById("filter-pub");
+  filt.innerHTML = '<option value="">All publishers</option>' + sorted.map(([p]) => `<option value="${p}">${p}</option>`).join("");
+}
+
+// ============================================================
+// GRID
+// ============================================================
+function condClass(c) { return c === "NM" ? "nm" : c === "VF" ? "vf" : c === "VG" ? "vg" : ""; }
+
+function cardHTML(c) {
+  const dateStr = new Date(c.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+  return `
+    <div class="card" data-id="${c.id}">
+      <div class="card-corner">#${c.issue}</div>
+      <div class="card-publisher">${c.publisher} · Vol. ${c.vol}</div>
+      <h3>${c.title}</h3>
+      <div class="card-edition">${c.edition}</div>
+      <div class="card-badges">
+        <span class="badge ${condClass(c.condition)}">${c.condition}</span>
+        ${c.cgc ? `<span class="badge cgc">CGC ${c.cgc}</span>` : ""}
+        ${c.key ? `<span class="badge key">🔑 Key</span>` : ""}
+      </div>
+      <div class="card-value">$${c.value}<small>CLZ ESTIMATED</small></div>
+      <div class="card-meta">
+        <span>${dateStr}</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn primary" data-action="ai" data-id="${c.id}">AI Insights</button>
+        <button class="btn" data-action="ebay" data-id="${c.id}">eBay Listing</button>
+      </div>
+    </div>`;
+}
+
+function renderGrid(list) {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = list.map(cardHTML).join("");
+  grid.querySelectorAll(".card").forEach((card, i) => {
+    setTimeout(() => card.classList.add("in"), Math.min(i*40, 600));
+  });
+  grid.querySelectorAll("[data-action]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = +btn.dataset.id;
+      const comic = COMICS.find(c => c.id === id);
+      if (btn.dataset.action === "ai") openInsights(comic);
+      if (btn.dataset.action === "ebay") openEbay(comic);
+    });
+  });
+}
+
+function applyFilters() {
+  const q = document.getElementById("search").value.toLowerCase();
+  const pub = document.getElementById("filter-pub").value;
+  const cond = document.getElementById("filter-cond").value;
+  const keyOnly = document.getElementById("filter-key").checked;
+  const cgcOnly = document.getElementById("filter-cgc").checked;
+  renderGrid(COMICS.filter(c => {
+    if (q && !c.title.toLowerCase().includes(q)) return false;
+    if (pub && c.publisher !== pub) return false;
+    if (cond && c.condition !== cond) return false;
+    if (keyOnly && !c.key) return false;
+    if (cgcOnly && !c.cgc) return false;
+    return true;
+  }));
+}
+
+// ============================================================
+// ANALYTICS
+// ============================================================
+function renderAnalytics() {
+  const seriesGroups = {};
+  COMICS.forEach(c => { seriesGroups[c.series] = (seriesGroups[c.series] || 0) + c.value; });
+  const max = Math.max(...Object.values(seriesGroups));
+  const sorted = Object.entries(seriesGroups).sort((a,b) => b[1] - a[1]);
+  const bars = document.getElementById("series-bars");
+  bars.innerHTML = sorted.map(([s, v]) => `
+    <div class="bar-row">
+      <div class="name">${s}</div>
+      <div class="bar-track"><div class="bar-fill" data-w="${(v/max*100).toFixed(1)}"></div></div>
+      <div class="val">$${v}</div>
+    </div>`).join("");
+  setTimeout(() => bars.querySelectorAll(".bar-fill").forEach(b => b.style.width = b.dataset.w + "%"), 50);
+
+  const keys = COMICS.filter(c => c.key).length;
+  const total = COMICS.length;
+  const pct = keys / total;
+  const C = 2 * Math.PI * 40;
+  const fg = document.getElementById("donut-fg");
+  fg.setAttribute("stroke-dasharray", `0 ${C}`);
+  setTimeout(() => {
+    fg.style.transition = "stroke-dasharray 1.2s cubic-bezier(.2,.7,.3,1)";
+    fg.setAttribute("stroke-dasharray", `${C * pct} ${C}`);
+  }, 80);
+  document.getElementById("donut-key").textContent = keys;
+  document.getElementById("donut-nonkey").textContent = total - keys;
+  document.getElementById("donut-pct").textContent = Math.round(pct * 100) + "% keys";
+
+  const top5 = [...COMICS].sort((a,b) => b.value - a.value).slice(0, 5);
+  const heights = [220, 190, 160, 130, 110];
+  document.getElementById("podium").innerHTML = top5.map((c, i) => `
+    <div class="podium-step" style="height:${heights[i]}px">
+      <div class="podium-rank">#${i+1}</div>
+      <div class="podium-title">${c.title}<br/>#${c.issue}</div>
+      <div class="podium-val">$${c.value}</div>
+    </div>`).join("");
+
+  const sortedByDate = [...COMICS].sort((a,b) => new Date(a.date) - new Date(b.date));
+  const minT = new Date(sortedByDate[0].date).getTime();
+  const maxT = new Date(sortedByDate[sortedByDate.length-1].date).getTime();
+  document.getElementById("timeline").innerHTML = sortedByDate.map(c => {
+    const t = new Date(c.date).getTime();
+    const pct = ((t - minT) / (maxT - minT)) * 100;
+    return `
+      <div class="timeline-dot ${c.key ? 'key' : ''}" style="left:${pct}%" title="${c.title} #${c.issue}">
+        <div class="timeline-label">
+          <span class="year">${new Date(c.date).getFullYear()}</span>
+          ${c.title.split(' ').slice(0,2).join(' ')}
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// ============================================================
+// TABS
+// ============================================================
+document.querySelectorAll(".nav-tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".nav-tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    const tab = t.dataset.tab;
+    document.getElementById("view-collection").classList.toggle("hidden", tab !== "collection");
+    document.getElementById("view-analytics").classList.toggle("hidden", tab !== "analytics");
+    if (tab === "analytics") renderAnalytics();
+  });
+});
+
+// ============================================================
+// ANTHROPIC API
+// ============================================================
+const MODEL = "claude-sonnet-4-20250514";
+function getApiKey() { return localStorage.getItem("anthropic_api_key") || ""; }
+
+async function callClaude(prompt, onChunk) {
+  const key = getApiKey();
+  if (!key) throw new Error("No API key set. Click the gear icon to add one.");
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify({ model: MODEL, max_tokens: 1024, stream: true, messages: [{ role: "user", content: prompt }] }),
+  });
+  if (!res.ok) throw new Error(`API ${res.status}: ${await res.text()}`);
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "", fullText = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop();
+    for (const line of lines) {
+      if (line.startsWith("data: ")) {
+        const d = line.slice(6).trim();
+        if (d === "[DONE]") continue;
+        try {
+          const p = JSON.parse(d);
+          if (p.type === "content_block_delta" && p.delta?.text) {
+            fullText += p.delta.text;
+            onChunk(fullText);
+          }
+        } catch(e) {}
+      }
+    }
+  }
+  return fullText;
+}
+
+// ============================================================
+// DRAWER
+// ============================================================
+const drawer = document.getElementById("drawer");
+document.getElementById("drawer-close").addEventListener("click", () => drawer.classList.remove("open"));
+
+function fmtMD(s) {
+  let h = s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
+  const lines = h.split("\n");
+  let out = "", inUl = false;
+  for (const ln of lines) {
+    const t = ln.trim();
+    if (/^[-•]\s+/.test(t)) {
+      if (!inUl) { out += "<ul>"; inUl = true; }
+      out += "<li>" + t.replace(/^[-•]\s+/,"") + "</li>";
+    } else {
+      if (inUl) { out += "</ul>"; inUl = false; }
+      if (t) out += "<p>" + t + "</p>";
+    }
+  }
+  if (inUl) out += "</ul>";
+  return out;
+}
+
+async function openInsights(c) {
+  document.getElementById("drawer-title").textContent = `${c.title} #${c.issue}`;
+  document.getElementById("drawer-sub").textContent = `${c.publisher} · ${c.edition} · ${c.condition}${c.cgc ? ' · CGC '+c.cgc : ''}`;
+  document.getElementById("drawer-body").innerHTML = `<div class="insights-card"><h4>Collector's Brief</h4><div id="ins-body"><span class="spinner"></span>Loading…</div></div>`;
+  drawer.classList.add("open");
+
+  const prompt = `Give me a 3-bullet collector's brief on ${c.title} #${c.issue} (${c.edition}, ${c.publisher}, ${new Date(c.date).toLocaleDateString()}). Include: (1) why this issue matters historically, (2) what drives its current market value, (3) one thing a seller should know before listing it on eBay. Use markdown bullets. Be concise and authoritative — speak to a serious collector.`;
+  const body = document.getElementById("ins-body");
+  try {
+    await callClaude(prompt, (text) => { body.innerHTML = fmtMD(text); });
+  } catch(e) {
+    body.innerHTML = `<p style="color:var(--accent)"><strong>Error:</strong> ${e.message}</p>`;
+  }
+}
+
+async function openEbay(c) {
+  document.getElementById("drawer-title").textContent = `eBay Listing — ${c.title} #${c.issue}`;
+  document.getElementById("drawer-sub").textContent = `Auto-generated draft`;
+  document.getElementById("drawer-body").innerHTML = `<div class="ebay-card">
+    <div class="ebay-logo"><span>e</span><span>b</span><span>a</span><span>y</span></div>
+    <div id="ebay-title" class="ebay-title"><span class="spinner"></span>Drafting…</div>
+    <div id="ebay-desc" class="ebay-desc"></div>
+    <button class="copy-btn" id="copy-listing">Copy Listing</button>
+  </div>`;
+  drawer.classList.add("open");
+
+  const prompt = `Generate a realistic eBay listing for this comic book.
+
+Comic details:
+- Title: ${c.title}, Vol. ${c.vol}
+- Issue: #${c.issue}
+- Edition: ${c.edition}
+- Publisher: ${c.publisher}
+- Date: ${new Date(c.date).toLocaleDateString()}
+- Condition: ${c.condition}${c.cgc ? ' (CGC graded ' + c.cgc + ')' : ' (raw, ungraded)'}
+- Key issue: ${c.key ? 'YES' : 'No'}
+- Asking price: $${c.value}
+
+Output FORMAT (no preamble, no markdown headers, just these two sections separated by a blank line):
+
+TITLE: <a single-line eBay title, 80 chars max, keyword-stuffed for search>
+
+DESCRIPTION:
+<3-5 short paragraphs. Include: a hook, key story significance, condition details, shipping/packaging notes, closing call-to-action. Plain text, no markdown.>`;
+
+  const titleEl = document.getElementById("ebay-title");
+  const descEl = document.getElementById("ebay-desc");
+  try {
+    await callClaude(prompt, (text) => {
+      const tMatch = text.match(/TITLE:\s*(.+?)(?:\n|$)/);
+      const dMatch = text.match(/DESCRIPTION:\s*([\s\S]+)/);
+      titleEl.textContent = tMatch ? tMatch[1].trim() : text.slice(0, 100);
+      descEl.textContent = dMatch ? dMatch[1].trim() : "";
+    });
+    document.getElementById("copy-listing").addEventListener("click", () => {
+      navigator.clipboard.writeText(titleEl.textContent + "\n\n" + descEl.textContent).then(() => {
+        const btn = document.getElementById("copy-listing");
+        btn.textContent = "✓ Copied";
+        setTimeout(() => btn.textContent = "Copy Listing", 1500);
+      });
+    });
+  } catch(e) {
+    titleEl.innerHTML = `<span style="color:var(--accent)">Error: ${e.message}</span>`;
+    descEl.textContent = "";
+  }
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+const modal = document.getElementById("settings-modal");
+document.getElementById("open-settings").addEventListener("click", () => {
+  document.getElementById("api-key-input").value = getApiKey();
+  modal.classList.add("open");
+});
+document.getElementById("close-settings").addEventListener("click", () => modal.classList.remove("open"));
+document.getElementById("save-key").addEventListener("click", () => {
+  const v = document.getElementById("api-key-input").value.trim();
+  if (v) localStorage.setItem("anthropic_api_key", v);
+  modal.classList.remove("open");
+});
+document.getElementById("clear-key").addEventListener("click", () => {
+  localStorage.removeItem("anthropic_api_key");
+  document.getElementById("api-key-input").value = "";
+});
+modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("open"); });
+
+// ============================================================
+// WIRE
+// ============================================================
+["search","filter-pub","filter-cond","filter-key","filter-cgc"].forEach(id => {
+  document.getElementById(id).addEventListener("input", applyFilters);
+});
+
+renderStats();
+renderPublisherBar();
+renderGrid(COMICS);
+</script>
+</body>
+</html>

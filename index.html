@@ -419,16 +419,6 @@
       <p style="color:var(--text-dim);font-size:13px;margin-bottom:14px">A senior comic appraiser's read on the collection. Streams from Claude.</p>
       <div id="brief-output" class="brief-output"><p style="color:var(--text-faint);font-style:italic">Click "Generate Brief" to analyze the collection.</p></div>
     </div>
-    <div class="a-panel" id="panel-heat" style="margin-bottom:20px;display:none">
-      <h3>🔥 First Appearances You Own <span style="font-size:11px;font-weight:500;color:var(--text-faint);font-family:'JetBrains Mono',monospace;margin-left:8px" id="fa-count"></span></h3>
-      <p style="color:var(--text-dim);font-size:13px;margin-bottom:14px">Characters whose first appearance is in a comic you own. Highlighted entries have movie/TV credits — these tend to spike on media announcements.</p>
-      <div id="heat-list" class="heat-list"></div>
-    </div>
-    <div class="a-panel" id="panel-runs" style="margin-bottom:20px;display:none">
-      <h3>📦 Run Completeness</h3>
-      <p style="color:var(--text-dim);font-size:13px;margin-bottom:14px">How close you are to completing each series. Limited to series with 5+ issues owned.</p>
-      <div id="runs-list" class="run-list"></div>
-    </div>
     <div class="analytics-grid">
       <div class="a-panel" style="grid-column:1/-1"><h3>Top 20 Series by Total Value</h3><div id="series-bars"></div></div>
       <div class="a-panel"><h3>Value by Era</h3><div class="donut-wrap"><svg class="donut" viewBox="0 0 100 100" id="era-donut"></svg><div class="donut-legend" id="era-legend"></div></div></div>
@@ -621,64 +611,7 @@ function csvToComics(text) {
 let COMICS = [];
 let filtered = [];
 let visibleCount = PAGE_SIZE;
-let METADATA = {};     // key "Series|Issue" → { synopsis, characters, creators, arcs, volumeId, ... }
-let VOLUMES = {};      // key seriesName → { id, totalIssues, startYear, name, publisher }
-let CHARACTERS = {};   // key charId → { name, image, firstAppearance, movies, ... }
-let FA_INDEX = {};     // key "Series|Issue" → [ charId, ... ] (first appearances in this issue)
-
-async function loadEnrichmentData() {
-  const tryFetch = async (path) => {
-    try {
-      const r = await fetch(path + "?v=" + Date.now());
-      if (!r.ok) return null;
-      return await r.json();
-    } catch (e) { return null; }
-  };
-  const [meta, vols, chars] = await Promise.all([
-    tryFetch("data/metadata.json"),
-    tryFetch("data/volumes.json"),
-    tryFetch("data/characters.json"),
-  ]);
-  METADATA = meta || {};
-  VOLUMES = vols || {};
-  CHARACTERS = chars || {};
-  // Build FA index — which issues in OUR collection are first appearances?
-  FA_INDEX = {};
-  if (Object.keys(CHARACTERS).length && Object.keys(VOLUMES).length) {
-    // Build reverse: volumeId → seriesName
-    const volIdToSeries = {};
-    for (const [series, v] of Object.entries(VOLUMES)) {
-      if (v && v.id) volIdToSeries[v.id] = series;
-    }
-    for (const [cid, ch] of Object.entries(CHARACTERS)) {
-      const fa = ch.firstAppearance;
-      if (!fa || !fa.volumeId || !fa.issueNum) continue;
-      const series = volIdToSeries[fa.volumeId];
-      if (!series) continue;
-      // Find any owned comic with this series + issue (allow variant suffix)
-      const numNorm = (fa.issueNum + "").replace(/[^0-9.]/g, "");
-      const matches = COMICS.filter(c => {
-        if (c.series !== series) return false;
-        const own = (c.issue || "").replace(/[^0-9.]/g, "");
-        return own === numNorm;
-      });
-      for (const m of matches) {
-        const key = `${m.series}|${m.issue}`;
-        if (!FA_INDEX[key]) FA_INDEX[key] = [];
-        FA_INDEX[key].push(cid);
-      }
-    }
-  }
-  // Show data status badge if we have enriched data
-  const cnt = Object.keys(METADATA).length;
-  if (cnt > 0) {
-    const note = document.getElementById("data-status");
-    if (note) {
-      note.classList.add("ok");
-      note.textContent = `Enriched with Comic Vine data — ${cnt} issues, ${Object.keys(CHARACTERS).length} characters, ${Object.values(FA_INDEX).reduce((s,a)=>s+a.length,0)} first appearances detected.`;
-    }
-  }
-}
+// Site uses only fields from the CSV — no external enrichment.
 
 async function loadComics() {
   // Apply localStorage overrides if any
@@ -795,22 +728,6 @@ function coverHTML(c) {
   return `<div class="placeholder" style="display:flex;--ph-from:${from};--ph-to:${to}"><div class="pub">${c.publisher}</div><div class="iss">#${escapeHTML(c.issue)}</div><div class="ser">${escapeHTML(c.series)}</div></div>`;
 }
 
-function getBadgesFor(c) {
-  const key = `${c.series}|${c.issue}`;
-  const faChars = FA_INDEX[key] || [];
-  if (!faChars.length) return "";
-  const charsWithMovies = faChars.filter(cid => (CHARACTERS[cid]?.movies || []).length > 0);
-  const badges = [];
-  if (faChars.length > 0) {
-    const name = CHARACTERS[faChars[0]]?.name || "key";
-    badges.push(`<span class="heat-badge fa" title="First appearance of ${escapeHTML(name)}">🔥 1st App</span>`);
-  }
-  if (charsWithMovies.length > 0) {
-    badges.push(`<span class="heat-badge media" title="In film/TV">🎬 On Screen</span>`);
-  }
-  return badges.length ? `<div class="heat-row">${badges.join("")}</div>` : "";
-}
-
 function cardHTML(c) {
   const year = c.date ? new Date(c.date).getFullYear() : "—";
   const markupPct = c.coverPrice > 0 ? Math.round((c.value - c.coverPrice) / c.coverPrice * 100) : null;
@@ -818,7 +735,6 @@ function cardHTML(c) {
   return `
     <div class="card" data-id="${c.id}">
       <button class="edit-pencil" data-action="edit" data-id="${c.id}" title="Edit">✎</button>
-      ${getBadgesFor(c)}
       <div class="card-corner">#${escapeHTML(c.issue)}</div>
       <div class="card-cover">${coverHTML(c)}</div>
       <div class="card-publisher">${c.publisher}</div>
@@ -894,60 +810,28 @@ document.getElementById("load-more").addEventListener("click", () => {
 const drawer = document.getElementById("drawer");
 document.getElementById("drawer-close").addEventListener("click", () => drawer.classList.remove("open"));
 
-function openDetails(c) {
-  const meta = METADATA[`${c.series}|${c.issue}`] || {};
-  const key = `${c.series}|${c.issue}`;
-  const faCharIds = FA_INDEX[key] || [];
-  const markup = c.coverPrice > 0 ? Math.round((c.value - c.coverPrice) / c.coverPrice * 100) : null;
+function covrPriceUrl(c) {
+  // Best-effort: link to CovrPrice search. They don't expose a public API, so this
+  // opens their site with the series+issue pre-filled for the user to view live pricing.
+  const q = encodeURIComponent(`${c.series} #${c.issue}`);
+  return `https://www.covrprice.com/search?searchTerm=${q}`;
+}
 
-  document.getElementById("drawer-title").textContent = meta.name ? `${c.series} #${c.issue} — "${meta.name}"` : `${c.series} #${c.issue}`;
+function openDetails(c) {
+  const markup = c.coverPrice > 0 ? Math.round((c.value - c.coverPrice) / c.coverPrice * 100) : null;
+  document.getElementById("drawer-title").textContent = `${c.series} #${c.issue}`;
   document.getElementById("drawer-sub").textContent = `${c.publisher}${c.date ? " · " + new Date(c.date).toLocaleDateString() : ""}`;
 
-  let html = "";
-  if (faCharIds.length) {
-    const names = faCharIds.map(cid => CHARACTERS[cid]?.name).filter(Boolean);
-    html += `<div style="background:linear-gradient(135deg,var(--gold-soft),var(--accent-soft));border:1px solid var(--gold);border-radius:10px;padding:16px;margin-bottom:18px"><div style="font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;margin-bottom:6px">🔥 First Appearance</div><div style="color:var(--text);font-weight:600">${names.map(escapeHTML).join(", ")}</div></div>`;
-  }
-
-  html += `<div class="detail-grid">
+  let html = `<div class="detail-grid">
     <div class="detail-cell"><div class="lbl">Issue</div><div class="v">#${escapeHTML(c.issue)}</div></div>
-    <div class="detail-cell"><div class="lbl">Publisher</div><div class="v">${c.publisher}</div></div>
+    <div class="detail-cell"><div class="lbl">Publisher</div><div class="v">${escapeHTML(c.publisher)}</div></div>
     <div class="detail-cell"><div class="lbl">Cover Price</div><div class="v">$${c.coverPrice.toFixed(2)}</div></div>
-    <div class="detail-cell"><div class="lbl">Current Value</div><div class="v" style="color:var(--gold)">$${c.value.toFixed(2)}</div></div>
+    <div class="detail-cell"><div class="lbl">CovrPrice Value</div><div class="v" style="color:var(--gold)">$${c.value.toFixed(2)}</div></div>
     ${markup !== null ? `<div class="detail-cell wide"><div class="lbl">Appreciation</div><div class="v" style="color:${markup >= 0 ? 'var(--ok)' : 'var(--accent)'}">${markup >= 0 ? "+" : ""}${markup}% since release</div></div>` : ""}
-  </div>`;
-
-  if (meta.synopsis) {
-    html += `<div class="syn-block">${escapeHTML(meta.synopsis)}</div>`;
-  }
-
-  if (meta.characters && meta.characters.length) {
-    html += `<div class="detail-section"><h4>Characters</h4><div class="char-list">${meta.characters.slice(0, 30).map(ch => {
-      const isFA = faCharIds.includes(String(ch.id));
-      const hasMovie = (CHARACTERS[ch.id]?.movies || []).length > 0;
-      const cls = isFA ? "fa" : (hasMovie ? "movie" : "");
-      const title = hasMovie ? `Appears in: ${(CHARACTERS[ch.id]?.movies || []).map(m=>m.name).join(", ")}` : "";
-      return `<span class="char-chip ${cls}" title="${escapeHTML(title)}">${escapeHTML(ch.name)}${isFA ? " 🔥" : (hasMovie ? " 🎬" : "")}</span>`;
-    }).join("")}</div></div>`;
-  }
-
-  if (meta.creators && meta.creators.length) {
-    const grouped = {};
-    meta.creators.forEach(p => {
-      const role = (p.role || "creator").split(",")[0].trim();
-      if (!grouped[role]) grouped[role] = [];
-      grouped[role].push(p.name);
-    });
-    html += `<div class="detail-section"><h4>Credits</h4><div class="creator-list">${Object.entries(grouped).map(([role, names]) => `<span class="creator-chip"><strong>${escapeHTML(role)}</strong>${names.map(escapeHTML).join(", ")}</span>`).join("")}</div></div>`;
-  } else if (c.artist) {
-    html += `<div class="detail-section"><h4>Artists</h4><div class="creator-list"><span class="creator-chip">${escapeHTML(c.artist)}</span></div></div>`;
-  }
-
-  if (meta.arcs && meta.arcs.length) {
-    html += `<div class="detail-section"><h4>Story Arcs</h4><div class="arc-list">${meta.arcs.map(a => `<span class="char-chip">${escapeHTML(a.name)}</span>`).join("")}</div></div>`;
-  }
-
-  html += `<div class="detail-actions" style="margin-top:20px">
+    ${c.artist ? `<div class="detail-cell wide"><div class="lbl">Artist</div><div class="v">${escapeHTML(c.artist)}</div></div>` : ""}
+  </div>
+  <div class="detail-actions" style="margin-top:20px">
+    <a class="btn" href="${covrPriceUrl(c)}" target="_blank" rel="noopener">View on CovrPrice ↗</a>
     <button class="btn primary" id="d-insights">AI Insights</button>
     <button class="btn" id="d-ebay">Draft eBay Listing</button>
   </div>
@@ -1150,71 +1034,8 @@ function renderEraDonut() {
     </div>`).join("");
 }
 
-function renderHeatPanel() {
-  const panel = document.getElementById("panel-heat");
-  const list = document.getElementById("heat-list");
-  // Collect first-appearance characters owned
-  const items = [];
-  for (const [key, charIds] of Object.entries(FA_INDEX)) {
-    const [series, issue] = key.split("|");
-    for (const cid of charIds) {
-      const ch = CHARACTERS[cid];
-      if (!ch) continue;
-      const ownedComic = COMICS.find(c => c.series === series && c.issue === issue);
-      if (!ownedComic) continue;
-      items.push({ ch, charId: cid, series, issue, comic: ownedComic, movieCount: (ch.movies || []).length });
-    }
-  }
-  if (!items.length) { panel.style.display = "none"; return; }
-  // Sort: media credits desc, then character appearances desc
-  items.sort((a,b) => (b.movieCount - a.movieCount) || ((b.ch.appearances||0) - (a.ch.appearances||0)));
-  document.getElementById("fa-count").textContent = `${items.length} first appearance${items.length>1?'s':''} owned`;
-  list.innerHTML = items.slice(0, 24).map(it => `
-    <div class="heat-item">
-      <div class="ic">${it.ch.image ? `<img src="${escapeHTML(it.ch.image)}" loading="lazy" alt="" onerror="this.replaceWith(document.createTextNode('🦸'))">` : "🦸"}</div>
-      <div class="meta">
-        <div class="charname">${escapeHTML(it.ch.name)}</div>
-        <div class="issref">${escapeHTML(it.series)} #${escapeHTML(it.issue)} · $${it.comic.value.toFixed(2)}</div>
-        ${it.movieCount ? `<div class="movies">🎬 ${it.ch.movies.slice(0,3).map(m=>escapeHTML(m.name)).join(" · ")}${it.movieCount>3?` +${it.movieCount-3}`:''}</div>` : ""}
-      </div>
-    </div>`).join("");
-  panel.style.display = "block";
-}
-
-function renderRunsPanel() {
-  const panel = document.getElementById("panel-runs");
-  const list = document.getElementById("runs-list");
-  if (!Object.keys(VOLUMES).length) { panel.style.display = "none"; return; }
-  const seriesOwned = {};
-  COMICS.forEach(c => {
-    if (!seriesOwned[c.series]) seriesOwned[c.series] = new Set();
-    const norm = (c.issue || "").replace(/[^0-9.]/g, "");
-    if (norm) seriesOwned[c.series].add(norm);
-  });
-  const rows = [];
-  for (const [series, ownedSet] of Object.entries(seriesOwned)) {
-    const v = VOLUMES[series];
-    if (!v || !v.totalIssues || v.totalIssues < 5) continue;
-    const owned = ownedSet.size;
-    if (owned < 5) continue;
-    const pct = (owned / v.totalIssues) * 100;
-    rows.push({ series, owned, total: v.totalIssues, pct, startYear: v.startYear, publisher: v.publisher });
-  }
-  if (!rows.length) { panel.style.display = "none"; return; }
-  rows.sort((a,b) => b.pct - a.pct);
-  list.innerHTML = rows.slice(0, 25).map(r => `
-    <div class="run-row ${r.pct >= 95 ? 'complete' : ''}">
-      <div class="name">${escapeHTML(r.series)}<small>${escapeHTML(r.publisher || "")} · ${r.startYear || "?"} · ${r.owned} of ${r.total}</small></div>
-      <div class="bar"><div style="width:${Math.min(r.pct,100).toFixed(1)}%"></div></div>
-      <div class="pct">${r.pct.toFixed(0)}%</div>
-    </div>`).join("");
-  panel.style.display = "block";
-}
-
 function renderAnalytics() {
   renderInsights();
-  renderHeatPanel();
-  renderRunsPanel();
   // Top series bars
   const seriesValues = {};
   COMICS.forEach(c => { seriesValues[c.series] = (seriesValues[c.series] || 0) + c.value; });
@@ -1265,25 +1086,6 @@ async function generateBrief() {
   COMICS.forEach(c => { pubBreak[c.publisher] = (pubBreak[c.publisher] || 0) + c.value; });
   const pubLines = Object.entries(pubBreak).sort((a,b) => b[1]-a[1]).map(([p,v]) => `- ${p}: $${Math.round(v).toLocaleString()} (${COMICS.filter(c=>c.publisher===p).length} issues)`).join("\n");
 
-  // Build first-appearance summary if available
-  let faLines = "";
-  if (Object.keys(FA_INDEX).length) {
-    const faOwned = [];
-    for (const [key, charIds] of Object.entries(FA_INDEX)) {
-      const [series, issue] = key.split("|");
-      const c = COMICS.find(x => x.series === series && x.issue === issue);
-      for (const cid of charIds) {
-        const ch = CHARACTERS[cid]; if (!ch) continue;
-        faOwned.push({ series, issue, char: ch.name, value: c?.value || 0, movies: (ch.movies||[]).map(m=>m.name) });
-      }
-    }
-    faOwned.sort((a,b) => (b.movies.length - a.movies.length) || (b.value - a.value));
-    if (faOwned.length) {
-      faLines = `\n\nFirst appearances owned (powerful collector signal — many spike on media news):\n` +
-        faOwned.slice(0, 20).map(fa => `- ${fa.series} #${fa.issue} ($${fa.value.toFixed(0)}) — 1st appearance of ${fa.char}${fa.movies.length ? ` [APPEARS IN: ${fa.movies.slice(0,3).join(", ")}]` : ""}`).join("\n");
-    }
-  }
-
   const prompt = `You are a senior comic appraiser, 25 years in the market — calm, candid, no hype.
 
 This is a real collection of ${COMICS.length} comics, total CovrPrice value $${Math.round(total).toLocaleString()}.
@@ -1292,7 +1094,7 @@ Publisher breakdown:
 ${pubLines}
 
 Top 30 most valuable issues (this is a sample; full collection is larger):
-${top30.map(c => `- ${c.series} #${c.issue} (${c.publisher}${c.date ? ", " + new Date(c.date).getFullYear() : ""}) — $${c.value.toFixed(2)}`).join("\n")}${faLines}
+${top30.map(c => `- ${c.series} #${c.issue} (${c.publisher}${c.date ? ", " + new Date(c.date).getFullYear() : ""}) — $${c.value.toFixed(2)}`).join("\n")}
 
 Write a Collection Brief in markdown using these EXACT sections (use ## for section headers, no preamble):
 
@@ -1520,12 +1322,6 @@ modal.addEventListener("click", e => { if (e.target === modal) modal.classList.r
     renderStats();
     renderPublisherBar();
     applyFilters();
-    // Load enrichment data async — re-render cards if it arrives
-    loadEnrichmentData().then(() => {
-      if (Object.keys(METADATA).length || Object.keys(FA_INDEX).length) {
-        applyFilters(); // re-render cards with badges
-      }
-    });
   } catch(e) {
     document.getElementById("grid").innerHTML = `<div class="loading-state" style="grid-column:1/-1;color:var(--accent)">Error loading collection: ${e.message}</div>`;
   }

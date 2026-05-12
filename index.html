@@ -1512,6 +1512,13 @@ const modal = document.getElementById("settings-modal");
 document.getElementById("open-settings").addEventListener("click", () => {
   document.getElementById("api-key-input").value = getApiKey();
   document.getElementById("gh-token-input").value = localStorage.getItem("github_pat") || "";
+  // Hide GitHub PAT row when using Sheet backend (no longer needed)
+  const ghInput = document.getElementById("gh-token-input");
+  const ghLabel = ghInput.previousElementSibling;
+  if (SHEET_ENABLED) {
+    ghInput.style.display = "none";
+    if (ghLabel && ghLabel.tagName === "P") ghLabel.style.display = "none";
+  }
   modal.classList.add("open");
 });
 document.getElementById("close-settings").addEventListener("click", () => modal.classList.remove("open"));

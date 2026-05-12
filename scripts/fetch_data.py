@@ -44,7 +44,7 @@ VOLS_PATH = DATA_DIR / "volumes.json"
 
 API_BASE = "https://comicvine.gamespot.com/api"
 HEADERS = {"User-Agent": "petes-corner/1.0"}
-THROTTLE = 1.05
+THROTTLE = 3.5
 API_KEY = os.environ.get("COMICVINE_API_KEY", "").strip()
 if not API_KEY:
     print("ERROR: set COMICVINE_API_KEY env var first", file=sys.stderr); sys.exit(1)

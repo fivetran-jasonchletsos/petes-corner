@@ -535,6 +535,17 @@
     font-size: 1.8rem; font-weight: 700; color: var(--gold);
     margin-top: 12px;
   }
+  .era-row {
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; gap: 10px; margin: 6px 0;
+    font-size: 13px;
+  }
+  .era-row .sq {
+    width: 12px; height: 12px; border-radius: 3px;
+  }
+  .era-row .label { color: var(--text); }
+  .era-row .label small { color: var(--text-faint); font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-left: 4px; }
+  .era-row .val { color: var(--gold); font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
 
   .timeline {
     position: relative; overflow-x: auto;
@@ -817,8 +828,8 @@
       <label class="toggle"><input type="checkbox" id="filter-key"/> Key only</label>
       <label class="toggle"><input type="checkbox" id="filter-cgc"/> CGC only</label>
       <div class="size-control" role="group" aria-label="Card size">
-        <button class="size-btn" data-size="s">S</button>
-        <button class="size-btn active" data-size="m">M</button>
+        <button class="size-btn active" data-size="s">S</button>
+        <button class="size-btn" data-size="m">M</button>
         <button class="size-btn" data-size="l">L</button>
       </div>
     </div>
@@ -856,18 +867,12 @@
         <div id="series-bars"></div>
       </div>
       <div class="a-panel">
-        <h3>Key Issues</h3>
+        <h3>Value by Era</h3>
         <div class="donut-wrap">
-          <svg class="donut" viewBox="0 0 100 100" id="donut">
+          <svg class="donut" viewBox="0 0 100 100" id="era-donut">
             <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface-3)" stroke-width="14"/>
-            <circle id="donut-fg" cx="50" cy="50" r="40" fill="none" stroke="var(--gold)" stroke-width="14"
-              stroke-dasharray="0 251.2"/>
           </svg>
-          <div class="donut-legend">
-            <div><span class="sq" style="background:var(--gold)"></span> <strong id="donut-key">0</strong> Key issues</div>
-            <div><span class="sq" style="background:var(--surface-3)"></span> <strong id="donut-nonkey">0</strong> Standard</div>
-            <div class="donut-pct" id="donut-pct">—%</div>
-          </div>
+          <div class="donut-legend" id="era-legend"></div>
         </div>
       </div>
       <div class="a-panel">
@@ -989,7 +994,7 @@ function setSize(size) {
   document.querySelectorAll(".size-btn").forEach(b => b.classList.toggle("active", b.dataset.size === size));
 }
 document.querySelectorAll(".size-btn").forEach(b => b.addEventListener("click", () => setSize(b.dataset.size)));
-setSize(localStorage.getItem("vault_size") || "m");
+setSize(localStorage.getItem("vault_size") || "s");
 
 // ============================================================
 // STATS
@@ -1216,6 +1221,58 @@ Be specific. Reference issue numbers and dollar figures. Avoid generic advice.`;
   }
 }
 
+const ERAS = [
+  { name: "Silver Age",  range: [1956, 1970], color: "var(--gold)" },
+  { name: "Bronze Age",  range: [1971, 1985], color: "var(--accent)" },
+  { name: "Copper Age",  range: [1986, 1991], color: "var(--info)" },
+  { name: "Modern Age",  range: [1992, 9999], color: "var(--ok)" },
+];
+
+function renderEraDonut() {
+  const groups = ERAS.map(e => {
+    const books = COMICS.filter(c => {
+      const y = new Date(c.date).getFullYear();
+      return y >= e.range[0] && y <= e.range[1];
+    });
+    const value = books.reduce((s, c) => s + c.value, 0);
+    return { ...e, books, value };
+  }).filter(g => g.value > 0);
+
+  const total = groups.reduce((s, g) => s + g.value, 0);
+  const C = 2 * Math.PI * 40;
+  const svg = document.getElementById("era-donut");
+  // Clear existing segments
+  svg.innerHTML = `<circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface-3)" stroke-width="14"/>`;
+
+  let offset = 0;
+  groups.forEach((g, i) => {
+    const len = (g.value / total) * C;
+    const seg = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    seg.setAttribute("cx", "50");
+    seg.setAttribute("cy", "50");
+    seg.setAttribute("r", "40");
+    seg.setAttribute("fill", "none");
+    seg.setAttribute("stroke", g.color);
+    seg.setAttribute("stroke-width", "14");
+    seg.setAttribute("stroke-dasharray", `0 ${C}`);
+    seg.setAttribute("stroke-dashoffset", `${-offset}`);
+    seg.setAttribute("transform", "rotate(-90 50 50)");
+    seg.style.transition = "stroke-dasharray 1s cubic-bezier(.2,.7,.3,1)";
+    svg.appendChild(seg);
+    // animate
+    setTimeout(() => seg.setAttribute("stroke-dasharray", `${len} ${C}`), 80 + i * 120);
+    offset += len;
+  });
+
+  document.getElementById("era-legend").innerHTML = groups.map(g => `
+    <div class="era-row">
+      <span class="sq" style="background:${g.color}"></span>
+      <span class="label">${g.name} <small>${g.range[0]}–${g.range[1] === 9999 ? "today" : g.range[1]} · ${g.books.length} book${g.books.length>1?'s':''}</small></span>
+      <span class="val">$${g.value} <small style="color:var(--text-faint)">(${Math.round(g.value/total*100)}%)</small></span>
+    </div>
+  `).join("");
+}
+
 function fmtBrief(s) {
   let h = s
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -1257,19 +1314,7 @@ function renderAnalytics() {
     </div>`).join("");
   setTimeout(() => bars.querySelectorAll(".bar-fill").forEach(b => b.style.width = b.dataset.w + "%"), 50);
 
-  const keys = COMICS.filter(c => c.key).length;
-  const total = COMICS.length;
-  const pct = keys / total;
-  const C = 2 * Math.PI * 40;
-  const fg = document.getElementById("donut-fg");
-  fg.setAttribute("stroke-dasharray", `0 ${C}`);
-  setTimeout(() => {
-    fg.style.transition = "stroke-dasharray 1.2s cubic-bezier(.2,.7,.3,1)";
-    fg.setAttribute("stroke-dasharray", `${C * pct} ${C}`);
-  }, 80);
-  document.getElementById("donut-key").textContent = keys;
-  document.getElementById("donut-nonkey").textContent = total - keys;
-  document.getElementById("donut-pct").textContent = Math.round(pct * 100) + "% keys";
+  renderEraDonut();
 
   const top5 = [...COMICS].sort((a,b) => b.value - a.value).slice(0, 5);
   const heights = [220, 190, 160, 130, 110];

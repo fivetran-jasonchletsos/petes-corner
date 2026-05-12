@@ -235,6 +235,52 @@
   .filters .toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
   .filters .toggle:has(input:checked) { color: var(--text); border-color: var(--accent); background: var(--accent-soft); }
 
+  /* Size segmented control */
+  .size-control {
+    display: inline-flex; background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 3px; margin-left: auto;
+  }
+  .size-btn {
+    background: transparent; border: 0; color: var(--text-dim);
+    padding: 6px 14px; font-size: 12px; font-weight: 600;
+    border-radius: 6px; min-width: 36px; letter-spacing: .05em;
+    transition: all .15s;
+  }
+  .size-btn:hover { color: var(--text); }
+  .size-btn.active {
+    background: var(--bg-elev); color: var(--text);
+    box-shadow: var(--shadow-sm);
+  }
+  @media (max-width: 720px) {
+    .size-control { margin-left: 0; width: 100%; justify-content: center; }
+    .size-btn { flex: 1; padding: 8px 12px; font-size: 13px; }
+  }
+
+  /* Size variants */
+  [data-size="s"] .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  [data-size="s"] .card { padding: 12px; }
+  [data-size="s"] .card-cover { margin: -2px 0 10px; border-radius: 6px; }
+  [data-size="s"] .card-corner { top: 12px; right: 12px; font-size: 10px; padding: 2px 6px; }
+  [data-size="s"] .card-publisher { font-size: 9px; }
+  [data-size="s"] .card h3 { font-size: .95rem; padding-right: 50px; margin-top: 4px; }
+  [data-size="s"] .card-edition { font-size: 11px; }
+  [data-size="s"] .card-badges { gap: 4px; margin-top: 10px; }
+  [data-size="s"] .badge { font-size: 9px; padding: 2px 6px; }
+  [data-size="s"] .card-value { font-size: 1.3rem; margin-top: 10px; }
+  [data-size="s"] .card-value small { font-size: 8px; }
+  [data-size="s"] .card-meta { margin-top: 8px; padding-top: 8px; font-size: 10px; }
+  [data-size="s"] .card-actions { margin-top: 10px; gap: 6px; }
+  [data-size="s"] .btn { padding: 7px 8px; font-size: 11px; }
+
+  [data-size="m"] .grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
+  [data-size="l"] .grid { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 22px; }
+  [data-size="l"] .card { padding: 24px; }
+  [data-size="l"] .card h3 { font-size: 1.55rem; }
+  [data-size="l"] .card-value { font-size: 2.2rem; }
+  [data-size="l"] .badge { font-size: 12px; padding: 4px 10px; }
+
   /* ============================================================
      CARDS GRID
      ============================================================ */
@@ -709,6 +755,11 @@
       </select>
       <label class="toggle"><input type="checkbox" id="filter-key"/> Key only</label>
       <label class="toggle"><input type="checkbox" id="filter-cgc"/> CGC only</label>
+      <div class="size-control" role="group" aria-label="Card size">
+        <button class="size-btn" data-size="s">S</button>
+        <button class="size-btn active" data-size="m">M</button>
+        <button class="size-btn" data-size="l">L</button>
+      </div>
     </div>
 
     <div class="grid" id="grid"></div>
@@ -849,6 +900,17 @@ document.getElementById("theme-toggle").addEventListener("click", () => {
   setTheme(cur === "dark" ? "light" : "dark");
 });
 setTheme(localStorage.getItem("vault_theme") || "dark");
+
+// ============================================================
+// CARD SIZE
+// ============================================================
+function setSize(size) {
+  document.documentElement.setAttribute("data-size", size);
+  localStorage.setItem("vault_size", size);
+  document.querySelectorAll(".size-btn").forEach(b => b.classList.toggle("active", b.dataset.size === size));
+}
+document.querySelectorAll(".size-btn").forEach(b => b.addEventListener("click", () => setSize(b.dataset.size)));
+setSize(localStorage.getItem("vault_size") || "m");
 
 // ============================================================
 // STATS

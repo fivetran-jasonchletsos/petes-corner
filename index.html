@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   :root, [data-theme="dark"] {
     --bg: #0d0e11; --bg-elev: #15171c; --surface: #1a1d24; --surface-2: #22262f; --surface-3: #2c313c;
@@ -156,6 +157,17 @@
   .data-status{margin-bottom:16px;padding:10px 14px;border-radius:8px;font-size:12px;font-family:'JetBrains Mono',monospace;display:none}
   .data-status.warn{display:block;background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn)}
   .data-status.ok{display:block;background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok)}
+
+  /* Google auth pill */
+  #auth-wrap{display:flex;align-items:center}
+  .user-pill{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:4px 8px 4px 4px;transition:border-color .15s}
+  .user-pill:hover{border-color:var(--text-faint)}
+  .user-pill img,.user-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font-weight:700;font-size:12px}
+  .user-name{font-size:13px;font-weight:500;color:var(--text);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .user-admin-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
+  .user-signout{background:transparent;border:0;color:var(--text-faint);width:22px;height:22px;border-radius:50%;font-size:12px;line-height:1;cursor:pointer}
+  .user-signout:hover{background:var(--surface-3);color:var(--accent)}
+  @media (max-width:720px){.user-name{display:none}}
   .card-publisher{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
   .card h3{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;line-height:1.2;margin-top:6px;padding-right:56px;letter-spacing:-.01em}
   .card-artist{color:var(--text-dim);font-size:12px;margin-top:4px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -323,6 +335,7 @@
         <button class="nav-tab active" data-tab="collection">Collection</button>
         <button class="nav-tab" data-tab="analytics">Analytics</button>
       </div>
+      <div id="auth-wrap"></div>
       <button class="icon-btn" id="theme-toggle" title="Toggle theme">
         <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
@@ -505,11 +518,19 @@
 // CONFIG
 // ============================================================
 const MODEL = "claude-sonnet-4-20250514";
-const ADMIN_KEY = "petes-corner-2026";
+const ADMIN_KEY = "petes-corner-2026";        // legacy URL fallback when SSO not yet configured
 const REPO_OWNER = "fivetran-jasonchletsos";
 const REPO_NAME = "petes-corner";
 const CSV_PATH = "comics.csv";
 const PAGE_SIZE = 60;
+
+// Google integration — populate these to switch from CSV+GitHub to Sheets+SSO
+const OAUTH_CLIENT_ID = "";                    // e.g. 1234.apps.googleusercontent.com
+const SHEET_ID = "";                           // e.g. 1AbC...xyZ from Sheet URL
+const SHEET_TAB = "Sheet1";                    // tab/worksheet name
+const ADMIN_EMAILS = ["jchletsos@gmail.com", "achletsos@gmail.com"];
+const SSO_ENABLED = !!OAUTH_CLIENT_ID;
+const SHEET_ENABLED = !!SHEET_ID;
 
 const PUBLISHER_COLORS = {
   "Marvel": "#ef4444",
@@ -620,13 +641,28 @@ async function loadComics() {
   const newAdds = JSON.parse(localStorage.getItem("petes_corner_adds") || "[]");
   const deletes = new Set(JSON.parse(localStorage.getItem("petes_corner_deletes") || "[]"));
 
-  const res = await fetch(CSV_PATH + "?v=" + Date.now());
-  if (!res.ok) throw new Error("Couldn't load comics.csv");
-  const text = await res.text();
+  let text;
+  if (SHEET_ENABLED) {
+    // Public read via gviz endpoint (CORS-friendly, requires "anyone with link can view")
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_TAB)}&_t=${Date.now()}`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Sheet HTTP ${res.status}`);
+      text = await res.text();
+    } catch(e) {
+      console.warn("Sheet load failed, falling back to local CSV:", e);
+      const fallback = await fetch(CSV_PATH + "?v=" + Date.now());
+      if (!fallback.ok) throw new Error("Couldn't load comics from sheet or local CSV");
+      text = await fallback.text();
+    }
+  } else {
+    const res = await fetch(CSV_PATH + "?v=" + Date.now());
+    if (!res.ok) throw new Error("Couldn't load comics.csv");
+    text = await res.text();
+  }
+
   COMICS = csvToComics(text).filter(c => !deletes.has(c.id));
-  // apply overrides
   COMICS = COMICS.map(c => overrides[c.id] ? { ...c, ...overrides[c.id] } : c);
-  // append adds
   if (newAdds.length) COMICS.push(...newAdds);
 }
 
@@ -1135,18 +1171,131 @@ function fmtBrief(s) {
 document.getElementById("generate-brief").addEventListener("click", generateBrief);
 
 // ============================================================
-// ADMIN
+// GOOGLE AUTH + ADMIN
 // ============================================================
+let currentUser = null;   // { email, name, picture, idToken }
+let sheetsAccessToken = null;
+let tokenClient = null;
+
+function parseJwt(token) {
+  try {
+    const b64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    return JSON.parse(decodeURIComponent(atob(b64).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")));
+  } catch(e) { return null; }
+}
+
 function isAdmin() {
+  if (SSO_ENABLED) {
+    return currentUser && ADMIN_EMAILS.includes((currentUser.email || "").toLowerCase());
+  }
+  // Legacy URL-key fallback
   const urlOK = new URLSearchParams(location.search).get("admin") === ADMIN_KEY;
   if (urlOK) localStorage.setItem("petes_admin", "1");
   return localStorage.getItem("petes_admin") === "1";
 }
 function setAdmin(on) {
-  if (on) localStorage.setItem("petes_admin", "1"); else localStorage.removeItem("petes_admin");
+  if (!SSO_ENABLED) {
+    if (on) localStorage.setItem("petes_admin", "1"); else localStorage.removeItem("petes_admin");
+  }
   document.documentElement.setAttribute("data-admin", on ? "1" : "0");
 }
+
+function renderAuthUI() {
+  const wrap = document.getElementById("auth-wrap");
+  if (!wrap) return;
+  if (!SSO_ENABLED) { wrap.innerHTML = ""; return; }
+  if (currentUser) {
+    const admin = ADMIN_EMAILS.includes((currentUser.email || "").toLowerCase());
+    wrap.innerHTML = `
+      <div class="user-pill" title="${escapeHTML(currentUser.email)}">
+        ${currentUser.picture ? `<img src="${currentUser.picture}" alt="">` : `<div class="user-avatar">${(currentUser.name||"?").charAt(0).toUpperCase()}</div>`}
+        <span class="user-name">${escapeHTML((currentUser.name || currentUser.email || "").split(" ")[0])}</span>
+        ${admin ? '<span class="user-admin-dot" title="Admin"></span>' : ''}
+        <button class="user-signout" id="btn-signout" title="Sign out">✕</button>
+      </div>`;
+    document.getElementById("btn-signout").addEventListener("click", handleSignOut);
+  } else {
+    wrap.innerHTML = `<button class="btn primary" id="btn-signin">Sign in with Google</button>`;
+    document.getElementById("btn-signin").addEventListener("click", promptSignIn);
+  }
+}
+
+function handleSignIn(response) {
+  const payload = parseJwt(response.credential);
+  if (!payload) { toast("Sign-in failed", "error"); return; }
+  currentUser = {
+    email: payload.email,
+    name: payload.name,
+    picture: payload.picture,
+    idToken: response.credential,
+  };
+  localStorage.setItem("petes_user", JSON.stringify(currentUser));
+  setAdmin(isAdmin());
+  renderAuthUI();
+  toast(`Signed in as ${currentUser.email}${isAdmin() ? " (admin)" : ""}`, "success");
+}
+
+function handleSignOut() {
+  currentUser = null;
+  sheetsAccessToken = null;
+  localStorage.removeItem("petes_user");
+  setAdmin(false);
+  if (window.google?.accounts?.id) google.accounts.id.disableAutoSelect();
+  renderAuthUI();
+  toast("Signed out");
+}
+
+function promptSignIn() {
+  if (!window.google?.accounts?.id) {
+    toast("Google library still loading — try again in a sec", "warn");
+    return;
+  }
+  google.accounts.id.prompt();
+}
+
+function initGoogleAuth() {
+  if (!SSO_ENABLED) return;
+  if (!window.google?.accounts?.id) {
+    // GSI not loaded yet — retry
+    setTimeout(initGoogleAuth, 250);
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: OAUTH_CLIENT_ID,
+    callback: handleSignIn,
+    auto_select: true,
+  });
+  // OAuth2 token client for Sheets API writes
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: OAUTH_CLIENT_ID,
+    scope: "https://www.googleapis.com/auth/spreadsheets",
+    callback: (resp) => { sheetsAccessToken = resp.access_token; },
+  });
+  // Restore stored user, prompt sign-in only on explicit click
+  const stored = localStorage.getItem("petes_user");
+  if (stored) {
+    try { currentUser = JSON.parse(stored); } catch(e) {}
+  }
+  setAdmin(isAdmin());
+  renderAuthUI();
+}
+
+async function ensureSheetsAccess() {
+  if (sheetsAccessToken) return sheetsAccessToken;
+  return new Promise((resolve, reject) => {
+    if (!tokenClient) return reject(new Error("Google token client not initialized"));
+    tokenClient.callback = (resp) => {
+      if (resp.error) return reject(new Error(resp.error));
+      sheetsAccessToken = resp.access_token;
+      resolve(resp.access_token);
+    };
+    tokenClient.requestAccessToken({ prompt: "" });
+  });
+}
+
+// Initialize once on load and once SSO_ENABLED flips on
 setAdmin(isAdmin());
+window.addEventListener("load", () => setTimeout(initGoogleAuth, 100));
 
 function toast(msg, kind = "") {
   const el = document.getElementById("toast");
@@ -1247,6 +1396,51 @@ document.getElementById("export-csv").addEventListener("click", () => {
   toast("Downloaded petes-corner-comics.csv", "success");
 });
 
+function buildCsvRows() {
+  // Returns [[header], ...dataRows] suitable for Sheets API
+  const header = ["CovrPrice Value", "Series", "Issue", "Publisher", "Artist", "Cover Price", "Release Date", "Cover URL"];
+  const rows = [header];
+  COMICS.forEach(c => {
+    const dateStr = c.date ? new Date(c.date).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "";
+    rows.push([
+      c.value.toFixed(2),
+      c.series || "",
+      c.issue || "",
+      c.publisherRaw || c.publisher || "",
+      c.artist || "",
+      c.coverPrice.toFixed(2),
+      dateStr,
+      c.coverUrl || "",
+    ]);
+  });
+  return rows;
+}
+
+async function pushToSheet() {
+  if (!SHEET_ENABLED) throw new Error("SHEET_ID not configured");
+  if (!currentUser) { toast("Sign in first", "error"); return; }
+  const token = await ensureSheetsAccess();
+  const rows = buildCsvRows();
+  const range = `${SHEET_TAB}!A:Z`;
+  // 1) Clear the existing content
+  const clearRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}:clear`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+  });
+  if (!clearRes.ok) throw new Error(`Clear failed: ${clearRes.status} ${await clearRes.text()}`);
+  // 2) Write all rows fresh
+  const writeRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_TAB + "!A1")}?valueInputOption=USER_ENTERED`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ values: rows }),
+  });
+  if (!writeRes.ok) throw new Error(`Write failed: ${writeRes.status} ${await writeRes.text()}`);
+  // Clear local overrides — they're now in the canonical sheet
+  localStorage.removeItem("petes_corner_overrides");
+  localStorage.removeItem("petes_corner_adds");
+  localStorage.removeItem("petes_corner_deletes");
+}
+
 async function pushToGitHub() {
   const token = localStorage.getItem("github_pat");
   if (!token) { toast("Add a GitHub token in Settings first", "error"); document.getElementById("open-settings").click(); return; }
@@ -1290,7 +1484,28 @@ async function pushToGitHub() {
   } catch(e) { toast("Error: " + e.message, "error"); }
   finally { btn.disabled = false; btn.textContent = "Save to GitHub"; }
 }
-document.getElementById("push-github").addEventListener("click", pushToGitHub);
+document.getElementById("push-github").addEventListener("click", async () => {
+  const btn = document.getElementById("push-github");
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = "Saving…";
+  try {
+    if (SHEET_ENABLED) {
+      await pushToSheet();
+      toast("✓ Saved to Google Sheet", "success");
+      await loadComics(); renderStats(); renderPublisherBar(); applyFilters();
+    } else {
+      await pushToGitHub();
+    }
+  } catch(e) {
+    toast("Error: " + e.message, "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = SHEET_ENABLED ? "Save to Sheet" : original;
+  }
+});
+// Adjust button label based on backend
+(() => { const b = document.getElementById("push-github"); if (b && SHEET_ENABLED) b.textContent = "Save to Sheet"; })();
 
 // Settings
 const modal = document.getElementById("settings-modal");
